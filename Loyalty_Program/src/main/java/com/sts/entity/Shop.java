@@ -17,7 +17,6 @@ public class Shop {
     private String state;
     private String zipCode;
     private String country;
-    String hh;
     
 	public Long getShopId() {
 		return shopId;
