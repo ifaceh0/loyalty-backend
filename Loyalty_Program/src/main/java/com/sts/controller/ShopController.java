@@ -13,4 +13,5 @@ public class ShopController {
 	private ShopRepository shopRepository;
 	
 	
+	
 }
