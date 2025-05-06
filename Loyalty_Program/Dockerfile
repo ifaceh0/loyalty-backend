@@ -41,4 +41,3 @@ EXPOSE 8080
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "/app/Loyalty_Program-0.0.1-SNAPSHOT.jar"]
-
