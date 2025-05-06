@@ -1,4 +1,4 @@
-package com.sts.rerpository;
+package com.sts.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
