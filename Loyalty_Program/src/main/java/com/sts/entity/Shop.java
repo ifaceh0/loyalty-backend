@@ -20,6 +20,7 @@ public class Shop {
     
     
     
+    
 	public Long getShopId() {
 		return shopId;
 	}
