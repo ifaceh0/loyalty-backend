@@ -18,6 +18,7 @@ public class ShopController {
 	@Autowired
 	private ShopService shopService;
 	
+	
 	@PostMapping("saveShop")
 	public ResponseEntity<Shop> createShop(@RequestBody Shop shop) {
 		Shop shopDetails = shopService.createShop(shop);
