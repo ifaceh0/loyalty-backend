@@ -24,6 +24,7 @@ public class ShopController {
 		Shop shopDetails = shopService.createShop(shop);
 		return new ResponseEntity<Shop>(shopDetails, HttpStatus.CREATED);
 	}
+	 
 	
 	
 }

@@ -18,7 +18,6 @@ public class Shop {
     private String zipCode;
     private String country;
 
-
 	public Long getShopId() {
 		return shopId;
 	}
