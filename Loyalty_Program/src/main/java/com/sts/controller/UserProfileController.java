@@ -28,8 +28,13 @@ public class UserProfileController
 	@PostMapping
     public ResponseEntity<UserProfile> createUserProfile (@RequestBody UserProfile userProfile)
 	{
-        UserProfile savedUserProfile  = userProfileService.saveUserProfile(userProfile);
-        return new ResponseEntity<>(savedUserProfile , HttpStatus.CREATED);
+		try {
+			UserProfile savedUserProfile  = userProfileService.saveUserProfile(userProfile);
+	        return new ResponseEntity<>(savedUserProfile , HttpStatus.CREATED);
+		} catch (Exception e) {
+			e.printStackTrace();  
+	        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}       
     }
 	
 	@GetMapping
