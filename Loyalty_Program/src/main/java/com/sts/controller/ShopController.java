@@ -14,19 +14,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 
 @RestController
-@RequestMapping("api/shop")
+@RequestMapping("/api/shop")
 public class ShopController {
 	@Autowired
 	private ShopService shopService;
 	
 	
-	@PostMapping("saveShop")
+	@PostMapping("/saveShop")
 	public ResponseEntity<Shop> createShop(@RequestBody Shop shop) {
 		Shop shopDetails = shopService.createShop(shop);
 		return new ResponseEntity<Shop>(shopDetails, HttpStatus.CREATED);
 	}
 	 
-	@PostMapping("saveShopkeeper")
+	@PostMapping("/saveShopkeeper")
 	public ResponseEntity<Shopkeeper_Setting> createShopesetting(@RequestBody Shopkeeper_Setting ss){
 		Shopkeeper_Setting shopkeeperDetails=shopService.createShopkeeper(ss);
 		return new ResponseEntity<Shopkeeper_Setting>(shopkeeperDetails, HttpStatus.CREATED);
