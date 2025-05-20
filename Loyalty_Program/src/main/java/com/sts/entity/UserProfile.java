@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class UserProfile 
@@ -19,6 +21,13 @@ public class UserProfile
 
 	    @Column(name = "transaction_date")
 	    private LocalDateTime transactionDate;
+	    
+	    @Column(name = "total_points")
+	    private Integer totalPoints;
+	    
+	    @ManyToOne
+	    @JoinColumn(name = "shop_id", nullable = false)
+	    private Shop shop;
 
 	    public Long getUserId() {
 			return userId;
@@ -52,8 +61,6 @@ public class UserProfile
 			this.totalPoints = totalPoints;
 		}
 
-		@Column(name = "total_points")
-	    private Integer totalPoints;
 
 }
 
