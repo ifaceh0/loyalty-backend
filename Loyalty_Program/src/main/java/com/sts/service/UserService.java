@@ -1,5 +1,7 @@
 package com.sts.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,4 +20,8 @@ public class UserService {
 		
 		return userService.save(user);
 	}
+	
+//	public Optional<User> getUserById(Long id){
+//		return userService.findById(id);
+//	}
 }
