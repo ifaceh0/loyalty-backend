@@ -1,5 +1,7 @@
 package com.sts.entity;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,10 +19,13 @@ public class Shopkeeper_Setting {
 	    @JoinColumn(name = "shop_id")
 	    private Shop shop;
 
-	    private double purchase; 		//dollarPerPoint
-	    private String reward; 			// e.g., "100 points = $10 off"
-	    private String promotionCoupon; // e.g., "$50 off on next purchase after $5000 spent"
-	    private int newUserBonusPoints;
+	    private double dollarToPointMapping; 		//dollarPerPoint
+	    private double milestoneBonusAmount; 	//Coupon ($5) to redeem on next purchase
+
+	    private String specialBonusName;//Diwali bonus
+	    private double specialBonusPoints;//$ -> 10 points
+	    private LocalDate specialBonusStartDate;
+	    private LocalDate specialBonusEndDate;
 		public Long getId() {
 			return id;
 		}
@@ -33,28 +38,42 @@ public class Shopkeeper_Setting {
 		public void setShop(Shop shop) {
 			this.shop = shop;
 		}
-		public double getPurchase() {
-			return purchase;
+		public double getDollarToPointMapping() {
+			return dollarToPointMapping;
 		}
-		public void setPurchase(double purchase) {
-			this.purchase = purchase;
+		public void setDollarToPointMapping(double dollarToPointMapping) {
+			this.dollarToPointMapping = dollarToPointMapping;
 		}
-		public String getReward() {
-			return reward;
+		public double getMilestoneBonusAmount() {
+			return milestoneBonusAmount;
 		}
-		public void setReward(String reward) {
-			this.reward = reward;
+		public void setMilestoneBonusAmount(double milestoneBonusAmount) {
+			this.milestoneBonusAmount = milestoneBonusAmount;
 		}
-		public String getPromotionCoupon() {
-			return promotionCoupon;
+		public String getSpecialBonusName() {
+			return specialBonusName;
 		}
-		public void setPromotionCoupon(String promotionCoupon) {
-			this.promotionCoupon = promotionCoupon;
+		public void setSpecialBonusName(String specialBonusName) {
+			this.specialBonusName = specialBonusName;
 		}
-		public int getNewUserBonusPoints() {
-			return newUserBonusPoints;
+		public double getSpecialBonusPoints() {
+			return specialBonusPoints;
 		}
-		public void setNewUserBonusPoints(int newUserBonusPoints) {
-			this.newUserBonusPoints = newUserBonusPoints;
+		public void setSpecialBonusPoints(double specialBonusPoints) {
+			this.specialBonusPoints = specialBonusPoints;
 		}
+		public LocalDate getSpecialBonusStartDate() {
+			return specialBonusStartDate;
+		}
+		public void setSpecialBonusStartDate(LocalDate specialBonusStartDate) {
+			this.specialBonusStartDate = specialBonusStartDate;
+		}
+		public LocalDate getSpecialBonusEndDate() {
+			return specialBonusEndDate;
+		}
+		public void setSpecialBonusEndDate(LocalDate specialBonusEndDate) {
+			this.specialBonusEndDate = specialBonusEndDate;
+		}
+		
+		
 }
