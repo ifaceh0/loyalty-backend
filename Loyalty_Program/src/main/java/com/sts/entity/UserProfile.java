@@ -61,6 +61,5 @@ public class UserProfile
 			this.totalPoints = totalPoints;
 		}
 
-
 }
 
