@@ -8,15 +8,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sts.dto.LoginDto;
+import com.sts.dto.ResetPasswordDto;
 import com.sts.entity.Login;
 import com.sts.entity.Role;
+import com.sts.service.EmailService;
 import com.sts.service.LoginService;
+
+import java.security.SecureRandom;
+import java.time.Instant;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/login")
 public class LoginController {
 	@Autowired
 	private LoginService loginService;
+	
+	@Autowired
+	private EmailService emailService;
 	
 	@PostMapping("/registerUser")
 	public ResponseEntity<Login> createUser(@RequestBody Login login){
@@ -44,5 +55,51 @@ public class LoginController {
 			return ResponseEntity.status(401).body("Invalid password");
 		}
 		return ResponseEntity.ok(login);
+	}
+	
+	@PostMapping("/forgotPassword")
+	public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
+		String email = request.get("email");
+		if (email == null || email.isEmpty()) {
+			return ResponseEntity.badRequest().body("Email is required");
+		}
+		Login login = loginService.fetchByEmail(email);
+		if (login == null) {
+			return ResponseEntity.status(404).body("User not found");
+		}
+		// Generate a secure random reset token
+		SecureRandom random = new SecureRandom();
+		byte[] bytes = new byte[32];
+		random.nextBytes(bytes);
+		String resetToken = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+		// Set expiry to 15 minutes from now
+		long expiry = Instant.now().plusSeconds(15 * 60).toEpochMilli();
+		login.setResetToken(resetToken);
+		login.setResetTokenExpiry(expiry);
+		loginService.save(login);
+		// Send resetToken to user's email
+		String resetLink = "http://your-frontend-url/reset-password?token=" + resetToken;
+		emailService.sendSimpleMessage(email, "Password Reset Request", "Click the link to reset your password: " + resetLink);
+		Map<String, String> response = new HashMap<>();
+		response.put("message", "Password reset link sent to email");
+		return ResponseEntity.ok(response);
+	}
+
+	@PostMapping("/reset-Password")
+	public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordDto dto) {
+		String token = dto.getToken();
+		String newPassword = dto.getNewPassword();
+		if (token == null || newPassword == null || newPassword.isEmpty()) {
+			return ResponseEntity.badRequest().body("Token and new password are required");
+		}
+		Login login = loginService.fetchByResetToken(token);
+		if (login == null || login.getResetTokenExpiry() == null || login.getResetTokenExpiry() < System.currentTimeMillis()) {
+			return ResponseEntity.status(400).body("Invalid or expired token");
+		}
+		login.setPassword(newPassword);
+		login.setResetToken(null);
+		login.setResetTokenExpiry(null);
+		loginService.save(login);
+		return ResponseEntity.ok("Password reset successful");
 	}
 }

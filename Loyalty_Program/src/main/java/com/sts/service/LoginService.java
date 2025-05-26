@@ -25,4 +25,12 @@ public class LoginService {
 	public Login fetchByEmail(String email) {
 		return loginRepository.findByEmail(email);
 	}
+	
+	public Login fetchByResetToken(String resetToken) {
+		return loginRepository.findByResetToken(resetToken);
+	}
+
+	public void save(Login login) {
+		loginRepository.save(login);
+	}
 }

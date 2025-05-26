@@ -8,4 +8,5 @@ public interface LoginRepository extends JpaRepository<Login, Long>{
 	boolean existsByEmail(String email);
     boolean existsByPhoneNumber(String phoneNumber);
     Login findByEmail(String email);
+    Login findByResetToken(String resetToken);
 }
