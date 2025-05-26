@@ -119,6 +119,7 @@ public class ShopController {
 	             .map(user -> {
 	                 UserProfile profile = user.getUserProfile();
 
+	                 
 	                 Map<String, Object> userInfo = new HashMap<>();
 	                 userInfo.put("firstName", user.getFirstName());
 	                 userInfo.put("lastName", user.getLastName());
