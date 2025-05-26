@@ -20,8 +20,7 @@ public class User {
     private String firstName;
     private String lastName;
     
-    @Column(name = "phone_number", nullable = true,  unique = true)
-    /*@Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid phone number")*/
+    @Column(name = "phone_number", nullable = false,  unique = true)
     private String phoneNumber;
     
     @Column(unique=true)

@@ -57,6 +57,10 @@ public class UserProfile {
     @Column(name = "total_points")
     private Integer totalPoints;
 
+    @OneToOne
+    @JoinColumn(name = "userId", referencedColumnName = "userId", insertable = false, updatable = false)
+    private User user;
+
     // Getters and setters
     public Long getUserId() { return userId; }
     public void setUserId(Long userId) { this.userId = userId; }
@@ -70,4 +74,6 @@ public class UserProfile {
     public void setTransactionDate(LocalDateTime transactionDate) { this.transactionDate = transactionDate; }
     public Integer getTotalPoints() { return totalPoints; }
     public void setTotalPoints(Integer totalPoints) { this.totalPoints = totalPoints; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 }
