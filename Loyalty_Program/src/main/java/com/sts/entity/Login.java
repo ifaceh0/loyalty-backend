@@ -24,6 +24,12 @@ public class Login {
 	 @Enumerated(EnumType.STRING)
 	 @Column(nullable = false)
 	 private Role role;
+	 
+	@Column(name = "reset_token")
+	private String resetToken;
+
+	@Column(name = "reset_token_expiry")
+	private Long resetTokenExpiry;
 
 	public Long getId() {
 		return id;
@@ -79,5 +85,21 @@ public class Login {
 
 	public void setRole(Role role) {
 		this.role = role;
+	}
+
+	public String getResetToken() {
+		return resetToken;
+	}
+
+	public void setResetToken(String resetToken) {
+		this.resetToken = resetToken;
+	}
+
+	public Long getResetTokenExpiry() {
+		return resetTokenExpiry;
+	}
+
+	public void setResetTokenExpiry(Long resetTokenExpiry) {
+		this.resetTokenExpiry = resetTokenExpiry;
 	}
 }

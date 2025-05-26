@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sts.entity.UserProfile;
+import com.sts.entity.UserProfileId;
 import com.sts.service.UserProfileService;
-
 
 @RestController
 @RequestMapping("/api/user-profiles")
@@ -44,19 +44,18 @@ public class UserProfileController
         return new ResponseEntity<>(userProfiles, HttpStatus.OK);
     }
 
-	@GetMapping("/{userId}")
-	 public ResponseEntity<UserProfile> getUserProfileById(@PathVariable Long userId)
-	{
-	        Optional<UserProfile> userProfile = userProfileService.getUserProfileById(userId);
-	        return userProfile.map(ResponseEntity::ok)
-	                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-	 }
-	
-	@DeleteMapping("/{userId}")
-	public ResponseEntity<Void> deleteUserProfile(@PathVariable Long userId)
-	{
-        userProfileService.deleteUserProfile(userId);
-        return ResponseEntity.noContent().build();
+	@GetMapping("/{userId}/{shopId}")
+    public ResponseEntity<UserProfile> getUserProfileById(@PathVariable Long userId, @PathVariable Long shopId) {
+        UserProfileId id = new UserProfileId(userId, shopId);
+        return userProfileService.getUserProfileById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+	 @DeleteMapping("/{userId}/{shopId}")
+    public void deleteUserProfile(@PathVariable Long userId, @PathVariable Long shopId) {
+        UserProfileId id = new UserProfileId(userId, shopId);
+        userProfileService.deleteUserProfile(id);
     }
 	
 }

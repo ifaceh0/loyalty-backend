@@ -7,32 +7,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sts.entity.UserProfile;
+import com.sts.entity.UserProfileId;
 import com.sts.repository.UserProfileRepository;
 
 @Service
 public class UserProfileService 
 {
-	 @Autowired
-	    private UserProfileRepository userProfileRepository;
+	@Autowired
+	private UserProfileRepository userProfileRepository;
 
-	 public UserProfile saveUserProfile(UserProfile userProfile)
-	 {
-	        return userProfileRepository.save(userProfile);
-	    }
+	public UserProfileService(UserProfileRepository userProfileRepository) {
+        this.userProfileRepository = userProfileRepository;
+    }
 
-	    public List<UserProfile> getAllUserProfiles()
-	    {
-	        return userProfileRepository.findAll();
-	    }
+    public List<UserProfile> getAllUserProfiles() {
+        return userProfileRepository.findAll();
+    }
 
-	    public Optional<UserProfile> getUserProfileById(Long userId)
-	    {
-	        return userProfileRepository.findById(userId);
-	    }
+    public Optional<UserProfile> getUserProfileById(UserProfileId id) {
+        return userProfileRepository.findById(id);
+    }
 
-	    public void deleteUserProfile(Long userId)
-	    {
-	        userProfileRepository.deleteById(userId);
-	    }
+    public UserProfile saveUserProfile(UserProfile userProfile) {
+        return userProfileRepository.save(userProfile);
+    }
+
+    public void deleteUserProfile(UserProfileId id) {
+        userProfileRepository.deleteById(id);
+    }
 }
-
