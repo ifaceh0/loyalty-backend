@@ -114,11 +114,12 @@ public class ShopController {
 	    }
 
 	 @GetMapping("/userinfo-by-phone")
-	 public ResponseEntity<Map<String, Object>> getUserByPhone(@RequestParam String phoneNumber) {
+	 public ResponseEntity<Map<String, Object>>  getUserByPhone(@RequestParam String phoneNumber) {
 	     return userRepository.findByPhoneNumber(phoneNumber)
 	             .map(user -> {
 	                 UserProfile profile = user.getUserProfile();
 
+	                 
 	                 Map<String, Object> userInfo = new HashMap<>();
 	                 userInfo.put("firstName", user.getFirstName());
 	                 userInfo.put("lastName", user.getLastName());
