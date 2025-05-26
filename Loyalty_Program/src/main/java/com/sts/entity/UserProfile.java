@@ -49,7 +49,8 @@ public class UserProfile
 		public void setTransactionDate(LocalDateTime transactionDate) {
 			this.transactionDate = transactionDate;
 		}
-
+		@Column(name = "total_points")
+	    private Integer totalPoints;
 		public Integer getTotalPoints() {
 			return totalPoints;
 		}
@@ -58,8 +59,7 @@ public class UserProfile
 			this.totalPoints = totalPoints;
 		}
 
-		@Column(name = "total_points")
-	    private Integer totalPoints;
+		
 
 }
 

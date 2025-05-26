@@ -18,7 +18,12 @@ public class User {
     private Long id;
     private String firstName;
     private String lastName;
+    
+    @Column(name = "phone_number", nullable = true,  unique = true)
+    /*@Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid phone number")*/
     private String phoneNumber;
+    
+    @Column(unique=true)
     private String email;
     private String street;
     private String city;
@@ -31,6 +36,9 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime lastUpdatedDate;
 
+    
+    
+    
 	public Long getId() {
 		return id;
 	}
@@ -126,8 +134,20 @@ public class User {
 	public void setLastUpdatedDate(LocalDateTime lastUpdatedDate) {
 		this.lastUpdatedDate = lastUpdatedDate;
 	}
-    
-    
+	
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserProfile userProfile;
+
+
+
+
+	public UserProfile getUserProfile() {
+		return userProfile;
+	}
+
+	public void setUserProfile(UserProfile userProfile) {
+		this.userProfile = userProfile;
+	}
     
 
 //    public Shop getShop() {
