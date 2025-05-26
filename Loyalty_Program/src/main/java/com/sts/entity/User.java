@@ -36,6 +36,8 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime lastUpdatedDate;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserProfile userProfile;
 
     // Getters and setters
     public Long getUserId() { return userId; }
@@ -64,54 +66,7 @@ public class User {
     public void setCreatedDate(LocalDateTime createdDate) { this.createdDate = createdDate; }
     public LocalDateTime getLastUpdatedDate() { return lastUpdatedDate; }
     public void setLastUpdatedDate(LocalDateTime lastUpdatedDate) { this.lastUpdatedDate = lastUpdatedDate; }
-
-	
-	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private UserProfile userProfile;
-
-
-
-
-	public UserProfile getUserProfile() {
-		return userProfile;
-	}
-
-	public void setUserProfile(UserProfile userProfile) {
-		this.userProfile = userProfile;
-	}
- }   
-
-//    public Shop getShop() {
-//        return shop;
-//    }
-//
-//    public void setShop(Shop shop) {
-//        this.shop = shop;
-//    }
-//    public Set<Shop> getShops() {
-//		return shops;
-//	}
-//
-//	public void setShops(Set<Shop> shops) {
-//		this.shops = shops;
-//	}
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JoinColumn(name = "shopId")
-//    private Set<Shop> shops = new HashSet<>();
-//    
-//    @ElementCollection
-//    @CollectionTable(name = "user_loyaltyPoints", 
-//                     joinColumns = @JoinColumn(name = "user_id"))
-//    @MapKeyColumn(name = "shop_id")
-//    @Column(name = "loyalty_points")
-//    private Map<String, Double> userLoyaltyPoints = new HashMap<>();
-
-//    public Map<String, Double> getUserLoyaltyPoints() {
-//		return userLoyaltyPoints;
-//	}
-//
-//	public void setUserLoyaltyPoints(Map<String, Double> userLoyaltyPoints) {
-//		this.userLoyaltyPoints = userLoyaltyPoints;
-//	}
+    public UserProfile getUserProfile() { return userProfile; }
+    public void setUserProfile(UserProfile userProfile) { this.userProfile = userProfile; }
 }
 
