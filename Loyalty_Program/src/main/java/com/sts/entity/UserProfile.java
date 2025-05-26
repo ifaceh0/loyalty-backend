@@ -36,6 +36,7 @@ import jakarta.persistence.Table;
  * This entity is mapped to the 'user_profile' table in the database.
  */
 @Entity
+
 @Table(name = "user_profile")
 @IdClass(UserProfileId.class)
 public class UserProfile {
