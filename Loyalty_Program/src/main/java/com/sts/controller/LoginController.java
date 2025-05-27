@@ -30,14 +30,32 @@ public class LoginController {
 	private EmailService emailService;
 	
 	@PostMapping("/registerUser")
-	public ResponseEntity<Login> createUser(@RequestBody Login login){
+	public ResponseEntity<?> createUser(@RequestBody Login login){
+		if (login.getPhoneNumber() == null || login.getPhoneNumber().isEmpty()) {
+			return ResponseEntity.badRequest().body("Phone number is required");
+		}
+		if (login.getEmail() == null || login.getEmail().isEmpty()) {
+			return ResponseEntity.badRequest().body("Email is required");
+		}
+		if (login.getPassword() == null || login.getPassword().isEmpty()) {
+			return ResponseEntity.badRequest().body("Password is required");
+		}
 		login.setRole(Role.USER);
 		Login loginDetails = loginService.register(login);
 		return ResponseEntity.ok(loginDetails);
 	}
 	
 	@PostMapping("/registerShopkeeper")
-	public ResponseEntity<Login> createShopkeeper(@RequestBody Login login){
+	public ResponseEntity<?> createShopkeeper(@RequestBody Login login){
+		if (login.getPhoneNumber() == null || login.getPhoneNumber().isEmpty()) {
+			return ResponseEntity.badRequest().body("Phone number is required");
+		}
+		if (login.getEmail() == null || login.getEmail().isEmpty()) {
+			return ResponseEntity.badRequest().body("Email is required");
+		}
+		if (login.getPassword() == null || login.getPassword().isEmpty()) {
+			return ResponseEntity.badRequest().body("Password is required");
+		}
 		login.setRole(Role.SHOPKEEPER);
 		Login loginDetails = loginService.register(login);
 		return ResponseEntity.ok(loginDetails);
