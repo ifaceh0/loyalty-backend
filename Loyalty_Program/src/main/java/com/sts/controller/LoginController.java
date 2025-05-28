@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sts.dto.LoginDto;
 import com.sts.dto.ResetPasswordDto;
 import com.sts.entity.Login;
-import com.sts.entity.Role;
+import com.sts.enums.Role;
 import com.sts.service.EmailService;
 import com.sts.service.LoginService;
 
@@ -32,13 +32,13 @@ public class LoginController {
 	@PostMapping("/registerUser")
 	public ResponseEntity<?> createUser(@RequestBody Login login){
 		if (login.getPhoneNumber() == null || login.getPhoneNumber().isEmpty()) {
-			return ResponseEntity.badRequest().body("Phone number is required");
+			return ResponseEntity.badRequest().body(Map.of("message", "Phone number is required"));
 		}
 		if (login.getEmail() == null || login.getEmail().isEmpty()) {
-			return ResponseEntity.badRequest().body("Email is required");
+			return ResponseEntity.badRequest().body(Map.of("message", "Email is required"));
 		}
 		if (login.getPassword() == null || login.getPassword().isEmpty()) {
-			return ResponseEntity.badRequest().body("Password is required");
+			return ResponseEntity.badRequest().body(Map.of("message", "Password is required"));
 		}
 		login.setRole(Role.USER);
 		Login loginDetails = loginService.register(login);
@@ -48,13 +48,13 @@ public class LoginController {
 	@PostMapping("/registerShopkeeper")
 	public ResponseEntity<?> createShopkeeper(@RequestBody Login login){
 		if (login.getPhoneNumber() == null || login.getPhoneNumber().isEmpty()) {
-			return ResponseEntity.badRequest().body("Phone number is required");
+			return ResponseEntity.badRequest().body(Map.of("message", "Phone number is required"));
 		}
 		if (login.getEmail() == null || login.getEmail().isEmpty()) {
-			return ResponseEntity.badRequest().body("Email is required");
+			return ResponseEntity.badRequest().body(Map.of("message", "Email is required"));
 		}
 		if (login.getPassword() == null || login.getPassword().isEmpty()) {
-			return ResponseEntity.badRequest().body("Password is required");
+			return ResponseEntity.badRequest().body(Map.of("message", "Password is required"));
 		}
 		login.setRole(Role.SHOPKEEPER);
 		Login loginDetails = loginService.register(login);
@@ -66,11 +66,11 @@ public class LoginController {
 		Login login = loginService.fetchByEmail(dto.getEmail());
 		
 		if (login == null) {
-			return ResponseEntity.status(404).body("User not found");
+			return ResponseEntity.status(404).body(Map.of("message", "User not found"));
 		}
 		
 		if (!login.getPassword().equals(dto.getPassword())) {
-			return ResponseEntity.status(401).body("Invalid password");
+			return ResponseEntity.status(401).body(Map.of("message", "Invalid password"));
 		}
 		return ResponseEntity.ok(login);
 	}
@@ -79,11 +79,11 @@ public class LoginController {
 	public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
 		String email = request.get("email");
 		if (email == null || email.isEmpty()) {
-			return ResponseEntity.badRequest().body("Email is required");
+			return ResponseEntity.badRequest().body(Map.of("message", "Email is required"));
 		}
 		Login login = loginService.fetchByEmail(email);
 		if (login == null) {
-			return ResponseEntity.status(404).body("User not found");
+			return ResponseEntity.status(404).body(Map.of("message", "User not found"));
 		}
 		// Generate a secure random reset token
 		SecureRandom random = new SecureRandom();
@@ -96,7 +96,7 @@ public class LoginController {
 		login.setResetTokenExpiry(expiry);
 		loginService.save(login);
 		// Send resetToken to user's email
-		String resetLink = "http://your-frontend-url/reset-password?token=" + resetToken;
+		String resetLink = "https://loyalty-frontend-mu.vercel.app/reset-password?token=" + resetToken;
 		emailService.sendSimpleMessage(email, "Password Reset Request", "Click the link to reset your password: " + resetLink);
 		Map<String, String> response = new HashMap<>();
 		response.put("message", "Password reset link sent to email");

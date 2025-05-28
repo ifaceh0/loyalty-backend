@@ -106,7 +106,7 @@ public class ShopController {
 	                    userInfo.put("lastName", user.getLastName());
 	                    userInfo.put("email", user.getEmail());
 	                    userInfo.put("phoneNumber", user.getPhoneNumber());
-	                    userInfo.put("totalPoints", profile != null ? profile.getTotalPoints() : 0);
+	                    userInfo.put("availablePoints", profile != null ? profile.getAvailablePoints() : 0);
 
 	                    return ResponseEntity.ok(userInfo);
 	                })
@@ -126,7 +126,7 @@ public class ShopController {
 	                 userInfo.put("lastName", user.getLastName());
 	                 userInfo.put("email", user.getEmail());
 	                 userInfo.put("phoneNumber", user.getPhoneNumber());
-	                 userInfo.put("totalPoints", profile != null ? profile.getTotalPoints() : 0);
+	                 userInfo.put("availablePoints", profile != null ? profile.getAvailablePoints() : 0);
 
 	                 return ResponseEntity.ok(userInfo);
 	             })
