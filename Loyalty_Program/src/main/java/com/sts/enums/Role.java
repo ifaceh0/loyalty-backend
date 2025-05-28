@@ -1,4 +1,4 @@
-package com.sts.entity;
+package com.sts.enums;
 
 public enum Role {
 	USER,

@@ -29,6 +29,7 @@ public class Shop {
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
     private Set<User> users;
 
+    private String stripeCustomerId;
 
     // Getters and setters
     public Long getShopId() { return shopId; }
@@ -49,4 +50,6 @@ public class Shop {
     public void setCountry(String country) { this.country = country; }
     public Set<User> getUsers() { return users; }
     public void setUsers(Set<User> users) { this.users = users; }
+    public String getStripeCustomerId() {return stripeCustomerId;}
+    public void setStripeCustomerId(String stripeCustomerId) {this.stripeCustomerId = stripeCustomerId;}
 }
