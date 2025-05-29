@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sts.dto.LoginDto;
 import com.sts.dto.ResetPasswordDto;
 import com.sts.entity.Login;
-import com.sts.enums.Role;
 import com.sts.service.EmailService;
 import com.sts.service.LoginService;
 
@@ -29,24 +28,40 @@ public class LoginController {
 	@Autowired
 	private EmailService emailService;
 	
-	@PostMapping("/registerUser")
-	public ResponseEntity<?> createUser(@RequestBody Login login){
-		if (login.getPhoneNumber() == null || login.getPhoneNumber().isEmpty()) {
-			return ResponseEntity.badRequest().body(Map.of("message", "Phone number is required"));
-		}
-		if (login.getEmail() == null || login.getEmail().isEmpty()) {
-			return ResponseEntity.badRequest().body(Map.of("message", "Email is required"));
-		}
-		if (login.getPassword() == null || login.getPassword().isEmpty()) {
-			return ResponseEntity.badRequest().body(Map.of("message", "Password is required"));
-		}
-		login.setRole(Role.USER);
-		Login loginDetails = loginService.register(login);
-		return ResponseEntity.ok(loginDetails);
-	}
+	// @PostMapping("/registerUser")
+	// public ResponseEntity<?> createUser(@RequestBody Login login){
+	// 	if (login.getPhoneNumber() == null || login.getPhoneNumber().isEmpty()) {
+	// 		return ResponseEntity.badRequest().body(Map.of("message", "Phone number is required"));
+	// 	}
+	// 	if (login.getEmail() == null || login.getEmail().isEmpty()) {
+	// 		return ResponseEntity.badRequest().body(Map.of("message", "Email is required"));
+	// 	}
+	// 	if (login.getPassword() == null || login.getPassword().isEmpty()) {
+	// 		return ResponseEntity.badRequest().body(Map.of("message", "Password is required"));
+	// 	}
+	// 	login.setRole(Role.USER);
+	// 	Login loginDetails = loginService.register(login);
+	// 	return ResponseEntity.ok(loginDetails);
+	// }
+	
+	// @PostMapping("/registerShopkeeper")
+	// public ResponseEntity<?> createShopkeeper(@RequestBody Login login){
+	// 	if (login.getPhoneNumber() == null || login.getPhoneNumber().isEmpty()) {
+	// 		return ResponseEntity.badRequest().body(Map.of("message", "Phone number is required"));
+	// 	}
+	// 	if (login.getEmail() == null || login.getEmail().isEmpty()) {
+	// 		return ResponseEntity.badRequest().body(Map.of("message", "Email is required"));
+	// 	}
+	// 	if (login.getPassword() == null || login.getPassword().isEmpty()) {
+	// 		return ResponseEntity.badRequest().body(Map.of("message", "Password is required"));
+	// 	}
+	// 	login.setRole(Role.SHOPKEEPER);
+	// 	Login loginDetails = loginService.register(login);
+	// 	return ResponseEntity.ok(loginDetails);
+	// }
 	
 	@PostMapping("/registerShopkeeper")
-	public ResponseEntity<?> createShopkeeper(@RequestBody Login login){
+	public ResponseEntity<?> registerShopkeeperWithShop(@RequestBody Login login) {
 		if (login.getPhoneNumber() == null || login.getPhoneNumber().isEmpty()) {
 			return ResponseEntity.badRequest().body(Map.of("message", "Phone number is required"));
 		}
@@ -56,9 +71,25 @@ public class LoginController {
 		if (login.getPassword() == null || login.getPassword().isEmpty()) {
 			return ResponseEntity.badRequest().body(Map.of("message", "Password is required"));
 		}
-		login.setRole(Role.SHOPKEEPER);
-		Login loginDetails = loginService.register(login);
-		return ResponseEntity.ok(loginDetails);
+		// Call loginService to create login and shop
+		var shop = loginService.createShopkeeperAndLogin(login);
+		return ResponseEntity.ok(shop);
+	}
+
+	@PostMapping("/registerUser")
+	public ResponseEntity<?> registerUser(@RequestBody Login login) {
+		if (login.getPhoneNumber() == null || login.getPhoneNumber().isEmpty()) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Phone number is required"));
+		}
+		if (login.getEmail() == null || login.getEmail().isEmpty()) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Email is required"));
+		}
+		if (login.getPassword() == null || login.getPassword().isEmpty()) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Password is required"));
+		}
+		// Call loginService to create login and user
+		var user = loginService.createUserAndLogin(login);
+		return ResponseEntity.ok(user);
 	}
 	
 	@PostMapping("/signIn")
