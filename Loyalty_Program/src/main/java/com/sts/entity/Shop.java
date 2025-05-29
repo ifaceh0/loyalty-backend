@@ -22,6 +22,7 @@ public class Shop {
     private String state;
     private String zipCode;
     private String country;
+    private String email;
 
     @OneToOne(mappedBy = "shop", cascade = CascadeType.ALL)
     private Shopkeeper_Setting shopSetting;
@@ -48,6 +49,8 @@ public class Shop {
     public void setZipCode(String zipCode) { this.zipCode = zipCode; }
     public String getCountry() { return country; }
     public void setCountry(String country) { this.country = country; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
     public Set<User> getUsers() { return users; }
     public void setUsers(Set<User> users) { this.users = users; }
     public String getStripeCustomerId() {return stripeCustomerId;}

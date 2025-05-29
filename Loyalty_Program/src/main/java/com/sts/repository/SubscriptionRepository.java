@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
 
-    List<Subscription> findByShopId(Long shopId);
+    List<Subscription> findByShop_ShopId(Long shopId);
     
-    Optional<Subscription> findByShopIdAndStatus(Long shopId, String status);
+    Optional<Subscription> findByShop_ShopIdAndStatus(Long shopId, String status);
 }

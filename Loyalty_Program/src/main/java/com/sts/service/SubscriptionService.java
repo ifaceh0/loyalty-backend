@@ -29,41 +29,50 @@ public class SubscriptionService {
     @Value("${stripe.secret.key}")
     private String stripeSecretKey;
 
-    // public SubscriptionResponseDto createSubscription(SubscriptionRequestDto dto) {
-    //     Shop shop = shopRepository.findById(dto.getShopId())
-    //                               .orElseThrow(() -> new RuntimeException("Shop not found"));
+    public SubscriptionResponseDto createSubscription(SubscriptionRequestDto dto) {
+        Shop shop = shopRepository.findById(dto.getShopId())
+                                  .orElseThrow(() -> new RuntimeException("Shop not found"));
 
-    //     // Create Stripe Customer if not exists
-    //     // String stripeCustomerId = shop.getStripeCustomerId();
-    //     // if (stripeCustomerId == null) {
-    //     // Customer customer = stripeService.createCustomer(shop.getEmail(), shop.getName());
-    //     // stripeCustomerId = customer.getId();
-    //     // shop.setStripeCustomerId(stripeCustomerId);
-    //     // shopRepository.save(shop);
-    //     // }
+        // Create Stripe Customer if not exists
+        String stripeCustomerId = shop.getStripeCustomerId();
+        if (stripeCustomerId == null) {
+        try {
+                Customer customer = stripeService.createCustomer(shop.getEmail(), shop.getShopOwner());
+                stripeCustomerId = customer.getId();
+                shop.setStripeCustomerId(stripeCustomerId);
+                shopRepository.save(shop);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to create Stripe customer", e);
+            }
+        }
 
-    //     // Select Stripe Price ID based on plan
-    //     String priceId = getStripePriceId(dto.getPlanType(), dto.getPaymentTerm());
+        // Select Stripe Price ID based on plan
+        String priceId = getStripePriceId(dto.getPlanType(), dto.getPaymentTerm());
 
-    //     // Create Stripe Subscription
-    //     com.stripe.model.Subscription stripeSub = stripeService.createStripeSubscription(stripeCustomerId, priceId);
+        // Create Stripe Subscription
+        com.stripe.model.Subscription stripeSub;
+        try {
+            stripeSub = stripeService.createStripeSubscription(stripeCustomerId, priceId);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create Stripe subscription", e);
+        }
 
-    //     Subscription subscription = new Subscription();
-    //     subscription.setShop(shop);
-    //     subscription.setPlanType(dto.getPlanType());
-    //     subscription.setPaymentTerm(dto.getPaymentTerm());
-    //     subscription.setStripeCustomerId(stripeCustomerId);
-    //     subscription.setStripeSubscriptionId(String.valueOf(stripeSub.getId()));
-    //     subscription.setPrice(calculatePrice(dto.getPlanType(), dto.getPaymentTerm()));
-    //     subscription.setStatus("PENDING"); // Stripe will confirm later
-    //     subscription.setStartDate(LocalDateTime.now());
-    //     subscription.setEndDate(subscription.getStartDate().plusMonths(getMonths(dto.getPaymentTerm())));
-    //     subscription.setCreatedAt(LocalDateTime.now());
-    //     subscription.setUpdatedAt(LocalDateTime.now());
+        Subscription subscription = new Subscription();
+        subscription.setShop(shop);
+        subscription.setPlanType(dto.getPlanType());
+        subscription.setPaymentTerm(dto.getPaymentTerm());
+        subscription.setStripeCustomerId(stripeCustomerId);
+        subscription.setStripeSubscriptionId(String.valueOf(stripeSub.getId()));
+        subscription.setPrice(calculatePrice(dto.getPlanType(), dto.getPaymentTerm()));
+        subscription.setStatus("PENDING"); // Stripe will confirm later
+        subscription.setStartDate(LocalDateTime.now());
+        subscription.setEndDate(subscription.getStartDate().plusMonths(getMonths(dto.getPaymentTerm())));
+        subscription.setCreatedAt(LocalDateTime.now());
+        subscription.setUpdatedAt(LocalDateTime.now());
 
-    //     subscriptionRepository.save(subscription);
-    //     return mapToResponseDto(subscription);
-    // }
+        subscriptionRepository.save(subscription);
+        return mapToResponseDto(subscription);
+    }
 
     private double calculatePrice(PlanType planType, String term) {
         switch (planType) {
@@ -135,7 +144,7 @@ public class SubscriptionService {
         Stripe.apiKey = stripeSecretKey;
 
         // Find the active subscription for the shop
-        Subscription subscription = subscriptionRepository.findByShopIdAndStatus(shopId, "ACTIVE")
+        Subscription subscription = subscriptionRepository.findByShop_ShopIdAndStatus(shopId, "ACTIVE")
             .orElseThrow(() -> new RuntimeException("Active subscription not found"));
 
         // Cancel the subscription in Stripe
@@ -150,6 +159,5 @@ public class SubscriptionService {
 
         return "Subscription cancelled successfully.";
     }
-
 
 }
