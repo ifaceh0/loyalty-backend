@@ -60,6 +60,7 @@ public class LoginController {
 	// 	return ResponseEntity.ok(loginDetails);
 	// }
 	
+	
 	@PostMapping("/registerShopkeeper")
 	public ResponseEntity<?> registerShopkeeperWithShop(@RequestBody Login login) {
 		if (login.getPhoneNumber() == null || login.getPhoneNumber().isEmpty()) {
