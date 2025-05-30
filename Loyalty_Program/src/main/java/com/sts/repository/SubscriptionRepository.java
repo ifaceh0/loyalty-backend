@@ -11,5 +11,5 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
 
     List<Subscription> findByShopId(Long shopId);
     
-    Optional<Subscription> findByShopIdAndStatus(Long shopId, String status);
+    Optional<Subscription> findByShop_ShopIdAndStatus(Long shopId, String status);
 }

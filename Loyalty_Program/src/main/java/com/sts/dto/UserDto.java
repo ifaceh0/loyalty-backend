@@ -34,7 +34,29 @@ public class UserDto
 			Name = name;
 		}
 		
-		
+		 private String qrToken;
+		    private String qrCodeBase64;
+
+			public String getQrToken() {
+				return qrToken;
+			}
+			public void setQrToken(String qrToken) {
+				this.qrToken = qrToken;
+			}
+			public String getQrCodeBase64() {
+				return qrCodeBase64;
+			}
+			public void setQrCodeBase64(String qrCodeBase64) {
+				this.qrCodeBase64 = qrCodeBase64;
+			}
+			private String Email;
+
+			public String getEmail() {
+				return Email;
+			}
+			public void setEmail(String email) {
+				Email = email;
+			}
 		
 
 		
