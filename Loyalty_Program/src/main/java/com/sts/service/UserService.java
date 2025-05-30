@@ -1,6 +1,5 @@
 package com.sts.service;
 
-import com.sts.dto.UserDto;
 import com.sts.entity.User;
 import com.sts.repository.UserRepository;
 
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class UserService 
@@ -18,8 +16,8 @@ public class UserService
     @Autowired
     private UserRepository userRepository;
     
-    @Autowired
-    private QrCodeGenerator qrCodeGenerator;
+//    @Autowired
+//    private QrCodeGenerator qrCodeGenerator;
 
 
     public User createUser(User user) {
