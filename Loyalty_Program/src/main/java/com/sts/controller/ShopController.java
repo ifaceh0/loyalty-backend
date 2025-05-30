@@ -34,8 +34,8 @@ public class ShopController {
 	@Autowired
 	private UserRepository userRepository;
 	
-//	@Autowired
-//    private UserService userService;
+@Autowired
+private UserService userService;
 	
 	
 	@PostMapping("/saveShop")
@@ -98,7 +98,7 @@ public class ShopController {
 	                                   .body(Map.of("error", "User not found")));
 	 }
 	 
-	 @GetMapping("/user-by-qr")
+	 /*@GetMapping("/user-by-qr")
 	 public ResponseEntity<?> getUserByQrCode(@RequestParam String code) {
 	     Optional<User> userOpt = userRepository.findByQrToken(code);
 
@@ -114,7 +114,51 @@ public class ShopController {
 	                 return ResponseEntity.ok(userInfo);
 	             })
 	             .orElse( ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "User not found")));
+	 }*/
+	 
+	 
+	/* @SuppressWarnings("unchecked")
+	@PostMapping("/create-user")
+	    public ResponseEntity<?> createUser(@RequestBody User user) {
+	        Map<String, Object> result = (Map<String, Object>) userService.createUser(user);
+	        return ResponseEntity.ok(result);
+	    }*/
+
+	   /* @GetMapping("/user-by-qr")
+	    public ResponseEntity<?> getUserByQr(@RequestParam ("token")String token) {
+	        return userService.getUserByQrToken(token)
+	                .map(user -> {
+	                    Map<String, Object> userInfo = new HashMap<>();
+	                    userInfo.put("firstName", user.getFirstName());
+	                    userInfo.put("lastName", user.getLastName());
+	                    userInfo.put("email", user.getEmail());
+	                    userInfo.put("phoneNumber", user.getPhoneNumber());
+	                    return ResponseEntity.ok(userInfo);
+	                })
+	                .orElse(ResponseEntity.notFound().build());
+	    }*/
+	 
+	 
+	 
+	 
+	 @GetMapping("/user-by-qr")
+	 public ResponseEntity<?> getUserByQrToken(@RequestParam("token") String token) {
+	     Optional<User> userOptional = userService.getUserByQrToken(token);
+	     if (userOptional.isPresent()) {
+	         User user = userOptional.get();
+	         Map<String, Object> response = new HashMap<>();
+	         response.put("firstName", user.getFirstName());
+	         response.put("lastName", user.getLastName());
+	         response.put("email", user.getEmail());
+	         response.put("phoneNumber", user.getPhoneNumber());
+	         response.put("qrToken", user.getQrToken());
+	         return ResponseEntity.ok(response);
+	     } else {
+	         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found for provided QR token.");
+	     }
 	 }
 
+	}
 
-}
+
+

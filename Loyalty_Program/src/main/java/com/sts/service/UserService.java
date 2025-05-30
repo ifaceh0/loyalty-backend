@@ -1,13 +1,18 @@
 package com.sts.service;
 
+import com.google.zxing.WriterException;
 import com.sts.entity.User;
 import com.sts.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService 
@@ -16,14 +21,19 @@ public class UserService
     @Autowired
     private UserRepository userRepository;
     
-//    @Autowired
-//    private QrCodeGenerator qrCodeGenerator;
+  @Autowired
+   private QrCodeGenerator qrCodeGenerator;
 
 
-    public User createUser(User user) {
+   /* public User createUser(User user) {
+        return userRepository.save(user);
+    }*/
+   /* public User createUser(User user) {
+        // Generate QR token (e.g., UUID (Universally unique identifier)
+        user.setQrToken(java.util.UUID.randomUUID().toString());
         return userRepository.save(user);
     }
-
+    */
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -44,60 +54,37 @@ public class UserService
        
         return userRepository.save(user);
     }
+    
+    //For qr codes
     public Optional<User> getUserByQrToken(String qrToken) {
         return userRepository.findByQrToken(qrToken);
     }
-
-    public User createUser1(User user) {
-        // Generate QR token (e.g., UUID (Universally unique identifier)
-        user.setQrToken(java.util.UUID.randomUUID().toString());
-        return userRepository.save(user);
-    }
-}
-    
-    
-    //Qr code
-   /* public UserDto createUser1(User user) {
-        user.setQrtoken(UUID.randomUUID().toString());
-
+    public Map<String, Object> createUserWithQrCode(User user) {
+        user.setQrToken(UUID.randomUUID().toString());
         User savedUser = userRepository.save(user);
 
-        String qrBase64;
+        String qrCodeBase64;
         try {
-            qrBase64 = qrCodeGenerator.generateQrCodeBase64(savedUser.getQrtoken());
-        } catch (Exception e) {
-            throw new RuntimeException("QR Code generation failed", e);
+            qrCodeBase64 = "data:image/png;base64," + qrCodeGenerator.generateQrCodeBase64(savedUser.getQrToken());
+        } catch (WriterException | IOException e) {
+            throw new RuntimeException("QR Code generation failed");
         }
 
-        UserDto response = new UserDto();
-        response.setUser_Id(savedUser.getUserId());
-        response.setName(savedUser.getFirstName());
-        
-        response.setEmail(savedUser.getEmail());
-        response.setPhoneNumber(savedUser.getPhoneNumber());
-        response.setQrToken(savedUser.getQrtoken());
-        response.setQrCodeBase64(qrBase64);
+        Map<String, Object> response = new HashMap<>();
+        response.put("firstName", savedUser.getFirstName());
+        response.put("lastName", savedUser.getLastName());
+        response.put("email", savedUser.getEmail());
+        response.put("phoneNumber", savedUser.getPhoneNumber());
+        response.put("qrToken", savedUser.getQrToken());
+        response.put("qrCodeBase64", qrCodeBase64);  
 
         return response;
     }
+
+
     
-    
-    
-    public Optional<UserDto> getUserByQrToken(String qrToken) {
-        return userRepository.findByQrToken(qrToken).map(user -> {
-            UserDto dto = new UserDto();
-            dto.setName(user.getFirstName());
-           
-            dto.setEmail(user.getEmail());
-            dto.setPhoneNumber(user.getPhoneNumber());
-            dto.setQrToken(user.getQrtoken());
-            dto.setTotalpoints(user.getUserProfile() != null ? user.getUserProfile().getAvailablePoints() : 0);
-            return dto;
-        });
-    }
 }
-   /* @Override
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
-    }*/
+    
+    
+    
 
