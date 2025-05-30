@@ -67,5 +67,15 @@ public class User {
     public void setLastUpdatedDate(LocalDateTime lastUpdatedDate) { this.lastUpdatedDate = lastUpdatedDate; }
     public UserProfile getUserProfile() { return userProfile; }
     public void setUserProfile(UserProfile userProfile) { this.userProfile = userProfile; }
+    @Column(unique = true)
+    private String qrToken;
+
+	public String getQrToken() {
+		return qrToken;
+	}
+	public void setQrToken(String qrToken) {
+		this.qrToken = qrToken;
+	}
+
 }
 

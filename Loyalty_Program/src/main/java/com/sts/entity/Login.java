@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 public class Login {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name="shop_id")
 	private Long id;
 	private String firstName;
 	private String lastName;

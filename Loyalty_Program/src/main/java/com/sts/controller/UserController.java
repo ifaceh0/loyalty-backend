@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sts.dto.UserDto;
 //import com.sts.entity.Shop;
 import com.sts.entity.User;
 import com.sts.repository.UserRepository;
@@ -63,6 +64,11 @@ public class UserController {
         User updatedUser = userService.updateUser(id, userDetails);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
+    @PostMapping("/create")
+    public ResponseEntity<User> createUser1(@RequestBody User user) {
+        User response = userService.createUser(user);
+        return ResponseEntity.ok(response);
+    }
     
    /* DELETE
     @DeleteMapping("/deleteUser/{userId}")
@@ -70,24 +76,5 @@ public class UserController {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }*/
-  /*  @Autowired
-    private UserRepository repo;
-
-    @GetMapping("/search")
-    public ResponseEntity<?> getUserByPhone(@RequestParam String phone) {
-        Optional<User> userOpt = repo.findByPhoneNumber(phone);
-        if (userOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
-
-        User user = userOpt.get();
-        return ResponseEntity.ok(new UserDTO(
-                user.getId(),
-                user.getFirstName() + " " + user.getLastName(),
-                user.getPhoneNumber(),
-                user.getEmail()
-        ));
-    }
-
-    record UserDTO(Long id, String name, String phone, String email) {}*/
+ 
 }
