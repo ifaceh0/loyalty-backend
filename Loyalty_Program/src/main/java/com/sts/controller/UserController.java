@@ -1,6 +1,8 @@
 package com.sts.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +31,41 @@ public class UserController {
 	private UserService userService;
 	
 	
-	@PostMapping("saveUser")
+	/*@PostMapping("saveUser")
 	public ResponseEntity<User> createUser(@RequestBody User user) {
-		User userDetails = userService.createUser(user);
+		User userDetails = userService.createUserWithQrCode(user);
 		return new ResponseEntity<User>(userDetails, HttpStatus.CREATED);
-	}
+	}*/
+	
+	// Create user and return user details + QR code
+    @PostMapping("/createuser")
+    public ResponseEntity<?> createUser(@RequestBody User user) {
+        try {
+            Map<String, Object> response = userService.createUserWithQrCode(user);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating user: " + e.getMessage());
+        }
+    }
+    
+    
+ //  GET: Get user by QR token
+    @GetMapping("/user-by-qr")
+    public ResponseEntity<?> getUserByQrToken(@RequestParam("token") String token) {
+        Optional<User> userOpt = userService.getUserByQrToken(token);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            Map<String, Object> response = new HashMap<>();
+            response.put("firstName", user.getFirstName());
+            response.put("lastName", user.getLastName());
+            response.put("email", user.getEmail());
+            response.put("phoneNumber", user.getPhoneNumber());
+            response.put("qrToken", user.getQrToken());
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+    }
 	
 //	@GetMapping("/fetchUserById/{userId}")
 //	public ResponseEntity<User> getUserById(@PathVariable Long userId){
@@ -64,11 +96,11 @@ public class UserController {
         User updatedUser = userService.updateUser(id, userDetails);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
-    @PostMapping("/create")
+    /*@PostMapping("/create")
     public ResponseEntity<User> createUser1(@RequestBody User user) {
-        User response = userService.createUser(user);
+        User response = userService.createUserWithQrCode(user);
         return ResponseEntity.ok(response);
-    }
+    }*/
     
    /* DELETE
     @DeleteMapping("/deleteUser/{userId}")
