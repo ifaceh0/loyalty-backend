@@ -37,6 +37,10 @@ public class User {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UserProfile userProfile;
+    
+    @Column(unique = true)
+    private String qrToken;
+
 
     // Getters and setters
     public Long getUserId() { return userId; }
@@ -66,16 +70,9 @@ public class User {
     public LocalDateTime getLastUpdatedDate() { return lastUpdatedDate; }
     public void setLastUpdatedDate(LocalDateTime lastUpdatedDate) { this.lastUpdatedDate = lastUpdatedDate; }
     public UserProfile getUserProfile() { return userProfile; }
-    public void setUserProfile(UserProfile userProfile) { this.userProfile = userProfile; }
-    @Column(unique = true)
-    private String qrToken;
-
-	public String getQrToken() {
-		return qrToken;
-	}
-	public void setQrToken(String qrToken) {
-		this.qrToken = qrToken;
-	}
+    public void setUserProfile(UserProfile userProfile) { this.userProfile = userProfile; }    
+	public String getQrToken() {return qrToken;}
+	public void setQrToken(String qrToken) {this.qrToken = qrToken;}
 
 }
 

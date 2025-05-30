@@ -20,7 +20,6 @@ import com.sts.repository.UserRepository;
 import com.sts.service.ShopService;
 import com.sts.service.UserService;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,15 +27,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @RestController
 @RequestMapping("/api/shop")
-@CrossOrigin(origins = "*")
 public class ShopController {
 	@Autowired
 	private ShopService shopService;
 	
 	@Autowired
 	private UserRepository userRepository;
-	@Autowired
-    private UserService userService;
+	
+//	@Autowired
+//    private UserService userService;
 	
 	
 	@PostMapping("/saveShop")
