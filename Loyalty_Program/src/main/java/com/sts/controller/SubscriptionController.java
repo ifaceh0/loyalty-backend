@@ -3,6 +3,7 @@ package com.sts.controller;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Invoice;
 import com.stripe.net.Webhook;
+import com.sts.dto.PlanChangeRequestDto;
 import com.sts.dto.SubscriptionRequestDto;
 import com.sts.dto.SubscriptionResponseDto;
 import com.sts.service.SubscriptionService;
@@ -17,10 +18,10 @@ public class SubscriptionController {
     @Autowired
     private SubscriptionService subscriptionService;
 
-    // @PostMapping
-    // public ResponseEntity<SubscriptionResponseDto> subscribe(@RequestBody SubscriptionRequestDto dto) {
-    //     return ResponseEntity.ok(subscriptionService.createSubscription(dto));
-    // }
+    @PostMapping("/ceateSubscription")
+    public ResponseEntity<SubscriptionResponseDto> subscribe(@RequestBody SubscriptionRequestDto dto) {
+        return ResponseEntity.ok(subscriptionService.createSubscription(dto));
+    }
 
     // @PostMapping("/api/stripe/webhook")
     // public ResponseEntity<String> handleStripeEvent(@RequestBody String payload,
@@ -56,14 +57,20 @@ public class SubscriptionController {
     // }
 
 
-    @PostMapping("/cancelSubscription")
-    public ResponseEntity<String> cancelSubscription(@RequestBody SubscriptionRequestDto request) {
+    @PutMapping("/cancelSubscription")
+    public ResponseEntity<String> cancelSubscription(@RequestParam Long shopId) {
         try {
-            String result = subscriptionService.cancelSubscription(request.getShopId());
+            String result = subscriptionService.cancelSubscription(shopId);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
+    }
+
+    @PostMapping("/change-plan")
+    public ResponseEntity<String> changeSubscriptionPlan(@RequestBody PlanChangeRequestDto dto) {
+        String result = subscriptionService.schedulePlanChange(dto);
+        return ResponseEntity.ok(result);
     }
 
 }
