@@ -1,11 +1,12 @@
 package com.sts.dto;
 
+import com.sts.enums.PaymentTerm;
 import com.sts.enums.PlanType;
 
 public class SubscriptionRequestDto {
     private Long shopId;
     private PlanType planType; // BASIC, PRO, ENTERPRISE
-    private String paymentTerm; // Monthly, Quarterly, Yearly
+    private PaymentTerm paymentTerm; // Monthly, Quarterly, Yearly
 
     public Long getShopId() {
         return shopId;
@@ -13,7 +14,7 @@ public class SubscriptionRequestDto {
     public PlanType getPlanType() {
         return planType;
     }
-    public String getPaymentTerm() {
+    public PaymentTerm getPaymentTerm() {
         return paymentTerm;
     }
     public void setShopId(Long shopId) {
@@ -22,7 +23,7 @@ public class SubscriptionRequestDto {
     public void setPlanType(PlanType planType) {
         this.planType = planType;
     }
-    public void setPaymentTerm(String paymentTerm) {
+    public void setPaymentTerm(PaymentTerm paymentTerm) {
         this.paymentTerm = paymentTerm;
     }
 }

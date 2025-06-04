@@ -2,15 +2,18 @@ package com.sts.dto;
 
 import java.time.LocalDateTime;
 
+import com.sts.enums.PaymentTerm;
 import com.sts.enums.PlanType;
+import com.sts.enums.SubscriptionStatus;
 
 public class SubscriptionResponseDto {
     private Long id;
     private Long shopId;
     private PlanType planType;
-    private String paymentTerm;
+    private PaymentTerm paymentTerm;
     private Double price;
-    private String status;
+    private SubscriptionStatus status;
+    private boolean autoRenew;
     private String stripeSubscriptionId;
     private String stripeCustomerId;
     private LocalDateTime startDate;
@@ -36,10 +39,10 @@ public class SubscriptionResponseDto {
     public void setPlanType(PlanType planType) {
         this.planType = planType;
     }
-    public String getPaymentTerm() {
+    public PaymentTerm getPaymentTerm() {
         return paymentTerm;
     }
-    public void setPaymentTerm(String paymentTerm) {
+    public void setPaymentTerm(PaymentTerm paymentTerm) {
         this.paymentTerm = paymentTerm;
     }
     public Double getPrice() {
@@ -48,10 +51,10 @@ public class SubscriptionResponseDto {
     public void setPrice(Double price) {
         this.price = price;
     }
-    public String getStatus() {
+    public SubscriptionStatus getStatus() {
         return status;
     }
-    public void setStatus(String status) {
+    public void setStatus(SubscriptionStatus status) {
         this.status = status;
     }
     public String getStripeSubscriptionId() {
@@ -89,5 +92,11 @@ public class SubscriptionResponseDto {
     }
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+    public boolean isAutoRenew() {
+        return autoRenew;
+    }
+    public void setAutoRenew(boolean autoRenew) {
+        this.autoRenew = autoRenew;
     }
 }

@@ -2,9 +2,13 @@ package com.sts.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+
+import com.sts.enums.PaymentTerm;
 import com.sts.enums.PlanType;
+import com.sts.enums.SubscriptionStatus;
 
 @Entity
+@Table(name = "subscription")
 public class Subscription {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,25 +21,42 @@ public class Subscription {
     @Enumerated(EnumType.STRING)
     private PlanType planType; // BASIC, PRO, ENTERPRISE
 
-    private String paymentTerm; // Monthly, Quarterly, Yearly
+    @Enumerated(EnumType.STRING)
+    private PaymentTerm paymentTerm; // Monthly, Quarterly, Yearly
 
     private Double price;
 
     private String stripeSubscriptionId;
     private String stripeCustomerId;
-    // private String stripePaymentMethodId;
 
-    private String status; // ACTIVE, CANCELLED, etc.
+    private boolean autoRenew = true;
+
+    //for changes subscription plan
+    @Enumerated(EnumType.STRING)
+    private PlanType nextPlanType;
+    
+    @Enumerated(EnumType.STRING)
+    private PaymentTerm nextPaymentTerm;
+
+    private Double nextPrice;
+
+    @Enumerated(EnumType.STRING)
+    private SubscriptionStatus status; // ACTIVE, CANCELLED, etc.
 
     private LocalDateTime startDate;
     private LocalDateTime endDate;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDateTime createdOn;
+    private LocalDateTime updatedOn;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plan_definition_id")
+    private PlanDefinition planDefinition;
+
 
     // Getters and Setters
     public Long getId() {
-        return id;
+        return id;  
     }
 
     public Shop getShop() {
@@ -46,7 +67,7 @@ public class Subscription {
         return planType;
     }
 
-    public String getPaymentTerm() {
+    public PaymentTerm getPaymentTerm() {
         return paymentTerm;
     }
 
@@ -62,11 +83,11 @@ public class Subscription {
         return stripeCustomerId;
     }
 
-    // public String getStripePaymentMethodId() {
-    //     return stripePaymentMethodId;
-    // }
+    public boolean isAutoRenew() {
+        return autoRenew;
+    }
 
-    public String getStatus() {
+    public SubscriptionStatus getStatus() {
         return status;
     }
 
@@ -78,12 +99,12 @@ public class Subscription {
         return endDate;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public LocalDateTime getUpdatedOn() {
+        return updatedOn;
     }
 
     public void setId(Long id) {
@@ -98,7 +119,7 @@ public class Subscription {
         this.planType = planType;
     }
 
-    public void setPaymentTerm(String paymentTerm) {
+    public void setPaymentTerm(PaymentTerm paymentTerm) {
         this.paymentTerm = paymentTerm;
     }
 
@@ -114,11 +135,11 @@ public class Subscription {
         this.stripeCustomerId = stripeCustomerId;
     }
 
-    // public void setStripePaymentMethodId(String stripePaymentMethodId) {
-    //     this.stripePaymentMethodId = stripePaymentMethodId;
-    // }
+    public void setAutoRenew(boolean autoRenew) {
+        this.autoRenew = autoRenew;
+    }
 
-    public void setStatus(String status) {
+    public void setStatus(SubscriptionStatus status) {
         this.status = status;
     }
 
@@ -130,16 +151,43 @@ public class Subscription {
         this.endDate = endDate;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedOn(LocalDateTime createdOn) {
+        this.createdOn = createdOn;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdatedOn(LocalDateTime updatedOn) {
+        this.updatedOn = updatedOn;
     }
 
-    // public void setShopId(Long shopId) {
-    //     // Deprecated: use setShop(Shop shop) instead
-    //     throw new UnsupportedOperationException("Use setShop(Shop shop) instead.");
-    // }
+     public PlanType getNextPlanType() {
+        return nextPlanType;
+    }
+
+    public void setNextPlanType(PlanType nextPlanType) {
+        this.nextPlanType = nextPlanType;
+    }
+
+    public PaymentTerm getNextPaymentTerm() {
+        return nextPaymentTerm;
+    }
+
+    public void setNextPaymentTerm(PaymentTerm nextPaymentTerm) {
+        this.nextPaymentTerm = nextPaymentTerm;
+    }
+
+    public Double getNextPrice() {
+        return nextPrice;
+    }
+
+    public void setNextPrice(Double nextPrice) {
+        this.nextPrice = nextPrice;
+    }
+
+    public PlanDefinition getPlanDefinition() {
+        return planDefinition;
+    }
+
+    public void setPlanDefinition(PlanDefinition planDefinition) {
+        this.planDefinition = planDefinition;
+    }
 }

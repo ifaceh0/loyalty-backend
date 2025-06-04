@@ -1,9 +1,7 @@
 package com.sts.enums;
 
-public enum SubscriptionStatus {
+public enum PlanStatus {
     ACTIVE,
     CANCELLED,
     EXPIRED,
-    PENDING,
-    RENEWED
 }
