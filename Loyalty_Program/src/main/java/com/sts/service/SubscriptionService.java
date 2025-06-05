@@ -54,7 +54,7 @@ public class SubscriptionService {
 
         // Create Stripe Customer if not exists
         String stripeCustomerId = shop.getStripeCustomerId();
-        if (stripeCustomerId == null) {
+        if (stripeCustomerId == null || stripeCustomerId.isBlank()) {
         try {
                 Customer customer = stripeService.createCustomer(shop.getEmail(), shop.getShopOwner());
                 stripeCustomerId = customer.getId();
@@ -93,7 +93,7 @@ public class SubscriptionService {
         Subscription subscription = new Subscription();
         subscription.setShop(shop);
         subscription.setStripeCustomerId(stripeCustomerId);
-        subscription.setStripeSubscriptionId(stripeSub.getId());
+        subscription.setStripeSubscriptionId(stripeSub.getStatus().equals("active") ? stripeSub.getId() : null);
         subscription.setPlanType(dto.getPlanType());
         subscription.setPaymentTerm(dto.getPaymentTerm());
         // subscription.setPrice(calculatePrice(dto.getPlanType(), dto.getPaymentTerm()));
@@ -130,7 +130,7 @@ public class SubscriptionService {
     //Auto renewal of subscription
     @Scheduled(cron = "0 0 0 * * *") // Every day at midnight
     public void processAutoRenewals() {
-        List<Subscription> subscriptions = subscriptionRepository.findAll();
+        List<Subscription> subscriptions = subscriptionRepository.findByStatusAndAutoRenewTrueAndEndDateBefore(SubscriptionStatus.ACTIVE, LocalDateTime.now());
 
         LocalDateTime now = LocalDateTime.now();
 
