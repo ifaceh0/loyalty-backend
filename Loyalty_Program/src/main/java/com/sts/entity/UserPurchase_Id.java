@@ -8,8 +8,7 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.IdClass;
 
 @Embeddable
-public class UserPurchase_Id implements Serializable
-{
+public class UserPurchase_Id implements Serializable {
 
 	    @Column(name = "user_id")
 	    private Long userId;

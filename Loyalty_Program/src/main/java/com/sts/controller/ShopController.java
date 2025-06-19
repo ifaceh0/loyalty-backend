@@ -34,8 +34,8 @@ public class ShopController {
 	@Autowired
 	private UserRepository userRepository;
 	
-@Autowired
-private UserService userService;
+	@Autowired
+	private UserService userService;
 	
 	
 	@PostMapping("/saveShop")
@@ -69,7 +69,7 @@ private UserService userService;
 	                    userInfo.put("firstName", user.getFirstName());
 	                    userInfo.put("lastName", user.getLastName());
 	                    userInfo.put("email", user.getEmail());
-	                    userInfo.put("phoneNumber", user.getPhoneNumber());
+	                    userInfo.put("phoneNumber", user.getPhone());
 	                    userInfo.put("availablePoints", profile != null ? profile.getAvailablePoints() : 0);
 
 	                    return ResponseEntity.ok(userInfo);
@@ -78,8 +78,8 @@ private UserService userService;
 	    }
 
 	 @GetMapping("/userinfo-by-phone")
-	 public ResponseEntity<Map<String, Object>>  getUserByPhone(@RequestParam String phoneNumber) {
-	     return userRepository.findByPhoneNumber(phoneNumber)
+	 public ResponseEntity<Map<String, Object>>  getUserByPhone(@RequestParam String phone) {
+	     return userRepository.findByPhone(phone)
 	             .map(user -> {
 	                 UserProfile profile = user.getUserProfile();
 
@@ -89,7 +89,7 @@ private UserService userService;
 	                 userInfo.put("firstName", user.getFirstName());
 	                 userInfo.put("lastName", user.getLastName());
 	                 userInfo.put("email", user.getEmail());
-	                 userInfo.put("phoneNumber", user.getPhoneNumber());
+	                 userInfo.put("phoneNumber", user.getPhone());
 	                 userInfo.put("availablePoints", profile != null ? profile.getAvailablePoints() : 0);
 
 	                 return ResponseEntity.ok(userInfo);
@@ -150,7 +150,7 @@ private UserService userService;
 	         response.put("firstName", user.getFirstName());
 	         response.put("lastName", user.getLastName());
 	         response.put("email", user.getEmail());
-	         response.put("phoneNumber", user.getPhoneNumber());
+	         response.put("phoneNumber", user.getPhone());
 	         response.put("qrToken", user.getQrToken());
 	         return ResponseEntity.ok(response);
 	     } else {

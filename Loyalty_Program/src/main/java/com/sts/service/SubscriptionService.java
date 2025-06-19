@@ -56,7 +56,7 @@ public class SubscriptionService {
         String stripeCustomerId = shop.getStripeCustomerId();
         if (stripeCustomerId == null || stripeCustomerId.isBlank()) {
         try {
-                Customer customer = stripeService.createCustomer(shop.getEmail(), shop.getShopOwner());
+                Customer customer = stripeService.createCustomer(shop.getEmail(), shop.getShopName());
                 stripeCustomerId = customer.getId();
                 shop.setStripeCustomerId(stripeCustomerId);
                 shopRepository.save(shop);

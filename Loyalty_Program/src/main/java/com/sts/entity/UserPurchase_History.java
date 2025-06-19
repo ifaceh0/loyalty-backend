@@ -8,11 +8,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.Data;
 
 @Entity
-public class UserPurchase_History 
-{
-	
+@Data
+public class UserPurchase_History {
 	@EmbeddedId
     private UserPurchase_Id purchaseId;
 	
@@ -32,28 +32,28 @@ public class UserPurchase_History
 
     
     // Getters and Setters 
-    
-	public UserPurchase_Id getPurchaseId() {
-		return purchaseId;
-	}
-
-	public void setPurchaseId(UserPurchase_Id purchaseId) {
-		this.purchaseId = purchaseId;
-	}
-
-	public LocalDateTime getPurchaseDate() {
-		return purchaseDate;
-	}
-
-	public void setPurchaseDate(LocalDateTime purchaseDate) {
-		this.purchaseDate = purchaseDate;
-	}
-
-	public Integer getTransactionAmount() {
-		return transactionAmount;
-	}
-
-	public void setTransactionAmount(Integer transactionAmount) {
-		this.transactionAmount = transactionAmount;
-	}
+//
+//	public UserPurchase_Id getPurchaseId() {
+//		return purchaseId;
+//	}
+//
+//	public void setPurchaseId(UserPurchase_Id purchaseId) {
+//		this.purchaseId = purchaseId;
+//	}
+//
+//	public LocalDateTime getPurchaseDate() {
+//		return purchaseDate;
+//	}
+//
+//	public void setPurchaseDate(LocalDateTime purchaseDate) {
+//		this.purchaseDate = purchaseDate;
+//	}
+//
+//	public Integer getTransactionAmount() {
+//		return transactionAmount;
+//	}
+//
+//	public void setTransactionAmount(Integer transactionAmount) {
+//		this.transactionAmount = transactionAmount;
+//	}
 }
