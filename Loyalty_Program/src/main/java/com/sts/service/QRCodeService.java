@@ -52,7 +52,7 @@ public class QRCodeService {
 //	    }
 
 	public Map<String, Object> generateQRCode(Long userId, Long shopId) throws WriterException, IOException {
-		// Validate shop
+
 		Shop shop = shopRepository.findById(shopId)
 				.orElseThrow(() -> new RuntimeException("Shop not found"));
 
