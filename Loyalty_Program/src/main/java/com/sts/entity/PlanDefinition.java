@@ -13,9 +13,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name = "plan_definition")
+@Data
 public class PlanDefinition {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,81 +37,82 @@ public class PlanDefinition {
     @Column(name = "duration_in_months")
     private int durationInMonths;
 
-    public int getDurationInMonths() {
-        return durationInMonths;
-    }
-
-    public void setDurationInMonths(int durationInMonths) {
-        this.durationInMonths = durationInMonths;
-    }
-
-    public String getStripePriceId() {
-        return stripePriceId;
-    }
-
-    public void setStripePriceId(String stripePriceId) {
-        this.stripePriceId = stripePriceId;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
     private LocalDateTime effectiveFrom;
-
     private LocalDateTime createdOn;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public PlanType getPlanType() {
-        return planType;
-    }
-
-    public void setPlanType(PlanType planType) {
-        this.planType = planType;
-    }
-
-    public PaymentTerm getPaymentTerm() {
-        return paymentTerm;
-    }
-
-    public void setPaymentTerm(PaymentTerm paymentTerm) {
-        this.paymentTerm = paymentTerm;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public LocalDateTime getEffectiveFrom() {
-        return effectiveFrom;
-    }
-
-    public void setEffectiveFrom(LocalDateTime effectiveFrom) {
-        this.effectiveFrom = effectiveFrom;
-    }
-
-    public LocalDateTime getCreatedOn() {
-        return createdOn;
-    }
-
-    public void setCreatedOn(LocalDateTime createdOn) {
-        this.createdOn = createdOn;
-    }
-
-    
+//    public int getDurationInMonths() {
+//        return durationInMonths;
+//    }
+//
+//    public void setDurationInMonths(int durationInMonths) {
+//        this.durationInMonths = durationInMonths;
+//    }
+//
+//    public String getStripePriceId() {
+//        return stripePriceId;
+//    }
+//
+//    public void setStripePriceId(String stripePriceId) {
+//        this.stripePriceId = stripePriceId;
+//    }
+//
+//    public boolean isActive() {
+//        return active;
+//    }
+//
+//    public void setActive(boolean active) {
+//        this.active = active;
+//    }
+//
+//
+//
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
+//
+//    public PlanType getPlanType() {
+//        return planType;
+//    }
+//
+//    public void setPlanType(PlanType planType) {
+//        this.planType = planType;
+//    }
+//
+//    public PaymentTerm getPaymentTerm() {
+//        return paymentTerm;
+//    }
+//
+//    public void setPaymentTerm(PaymentTerm paymentTerm) {
+//        this.paymentTerm = paymentTerm;
+//    }
+//
+//    public double getPrice() {
+//        return price;
+//    }
+//
+//    public void setPrice(double price) {
+//        this.price = price;
+//    }
+//
+//    public LocalDateTime getEffectiveFrom() {
+//        return effectiveFrom;
+//    }
+//
+//    public void setEffectiveFrom(LocalDateTime effectiveFrom) {
+//        this.effectiveFrom = effectiveFrom;
+//    }
+//
+//    public LocalDateTime getCreatedOn() {
+//        return createdOn;
+//    }
+//
+//    public void setCreatedOn(LocalDateTime createdOn) {
+//        this.createdOn = createdOn;
+//    }
+//
+//
 }

@@ -59,7 +59,7 @@ public class UserController {
             response.put("firstName", user.getFirstName());
             response.put("lastName", user.getLastName());
             response.put("email", user.getEmail());
-            response.put("phoneNumber", user.getPhoneNumber());
+            response.put("phoneNumber", user.getPhone());
             response.put("qrToken", user.getQrToken());
             return ResponseEntity.ok(response);
         } else {

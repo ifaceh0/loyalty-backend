@@ -1,9 +1,14 @@
 package com.sts.service;
 
 import com.google.zxing.WriterException;
+import com.sts.dto.UserSignupRequest;
+import com.sts.entity.Login;
 import com.sts.entity.User;
+import com.sts.enums.Role;
+import com.sts.repository.LoginRepository;
 import com.sts.repository.UserRepository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,15 +19,18 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
-public class UserService 
-{
+public class UserService {
 
     @Autowired
     private UserRepository userRepository;
     
-  @Autowired
-   private QrCodeGenerator qrCodeGenerator;
+    @Autowired
+    private QrCodeGenerator qrCodeGenerator;
+
+    @Autowired
+    private LoginRepository loginRepository;
 
 
    /* public User createUser(User user) {
@@ -50,7 +58,7 @@ public class UserService
         user.setFirstName(userDetails.getFirstName());
         user.setLastName(userDetails.getLastName());
         user.setEmail(userDetails.getEmail());
-        user.setPhoneNumber(userDetails.getPhoneNumber());
+        user.setPhone(userDetails.getPhone());
        
         return userRepository.save(user);
     }
@@ -74,15 +82,12 @@ public class UserService
         response.put("firstName", savedUser.getFirstName());
         response.put("lastName", savedUser.getLastName());
         response.put("email", savedUser.getEmail());
-        response.put("phoneNumber", savedUser.getPhoneNumber());
+        response.put("phoneNumber", savedUser.getPhone());
         response.put("qrToken", savedUser.getQrToken());
         response.put("qrCodeBase64", qrCodeBase64);  
 
         return response;
     }
-
-
-    
 }
     
     
