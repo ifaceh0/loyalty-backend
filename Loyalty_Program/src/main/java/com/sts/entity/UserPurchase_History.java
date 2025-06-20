@@ -29,31 +29,4 @@ public class UserPurchase_History {
     private LocalDateTime purchaseDate;
 
     private Integer transactionAmount;
-
-    
-    // Getters and Setters 
-//
-//	public UserPurchase_Id getPurchaseId() {
-//		return purchaseId;
-//	}
-//
-//	public void setPurchaseId(UserPurchase_Id purchaseId) {
-//		this.purchaseId = purchaseId;
-//	}
-//
-//	public LocalDateTime getPurchaseDate() {
-//		return purchaseDate;
-//	}
-//
-//	public void setPurchaseDate(LocalDateTime purchaseDate) {
-//		this.purchaseDate = purchaseDate;
-//	}
-//
-//	public Integer getTransactionAmount() {
-//		return transactionAmount;
-//	}
-//
-//	public void setTransactionAmount(Integer transactionAmount) {
-//		this.transactionAmount = transactionAmount;
-//	}
 }

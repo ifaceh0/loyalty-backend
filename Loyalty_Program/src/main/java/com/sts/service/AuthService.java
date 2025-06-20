@@ -10,6 +10,7 @@ import com.sts.enums.Role;
 import com.sts.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -116,7 +117,7 @@ public class AuthService {
 
 		// Generate JWT
 		String token = jwtUtil.generateToken(login.getEmail(), login.getRole());
-		return new AuthResponse(token, "User registered successfully");
+		return new AuthResponse(token, "User registered successfully", user.getUserId());
 	}
 
 	@Transactional
@@ -149,21 +150,86 @@ public class AuthService {
 
 		// Generate JWT
 		String token = jwtUtil.generateToken(login.getEmail(), login.getRole());
-		return new AuthResponse(token, "Shop registered successfully");
+		return new AuthResponse(token, "Shop registered successfully", shop.getShopId());
 	}
 
+//	public AuthResponse signin(SigninRequest request) {
+//		// Find login by email
+//		Optional<Login> loginOpt = loginRepository.findByEmail(request.getEmail());
+//		if (loginOpt.isEmpty() || !passwordEncoder.matches(request.getPassword(), loginOpt.get().getPassword())) {
+//			throw new RuntimeException("Invalid credentials");
+//		}
+//
+//		Login login = loginOpt.get();
+//		// Generate JWT
+//		String token = jwtUtil.generateToken(login.getEmail(), login.getRole());
+//		return new AuthResponse(token, "Signin successful");
+//	}
+
 	public AuthResponse signin(SigninRequest request) {
-		// Find login by email
+		// Step 1: Validate login
 		Optional<Login> loginOpt = loginRepository.findByEmail(request.getEmail());
 		if (loginOpt.isEmpty() || !passwordEncoder.matches(request.getPassword(), loginOpt.get().getPassword())) {
 			throw new RuntimeException("Invalid credentials");
 		}
 
 		Login login = loginOpt.get();
-		// Generate JWT
+//		String token = jwtUtil.generateToken(login.getEmail(), Role.valueOf(login.getRole().name())); // Use role.name()
 		String token = jwtUtil.generateToken(login.getEmail(), login.getRole());
-		return new AuthResponse(token, "Signin successful");
+		Long id = null;
+
+		// Step 2: Match by email for USER or SHOP
+		if (login.getRole() == Role.USER) {
+			Optional<User> userOpt = userRepository.findByEmail(login.getEmail());
+			if (userOpt.isPresent()) {
+				id = userOpt.get().getUserId();
+			}
+		} else if (login.getRole() == Role.SHOPKEEPER) {
+			Optional<Shop> shopOpt = shopRepository.findByEmail(login.getEmail());
+			if (shopOpt.isPresent()) {
+				id = shopOpt.get().getShopId();
+			}
+		}
+
+		if (id == null) {
+			throw new RuntimeException("No matching User or Shop found for the provided email.");
+		}
+
+		return new AuthResponse(token, "Signin successful", id);
 	}
+
+
+
+
+//	public void requestPasswordReset(String email) {
+//		Login login = loginRepository.findByEmail(email)
+//				.orElseThrow(() -> new RuntimeException("User not found"));
+//
+//		String resetToken = UUID.randomUUID().toString();
+//		login.setResetToken(resetToken);
+//		login.setResetTokenExpiry(LocalDateTime.now().plusHours(1));
+//		loginRepository.save(login);
+//
+//		emailService.sendPasswordResetEmail(email, resetToken);
+//	}
+//
+//	public void resetPassword(String email, String newPassword, String resetToken) {
+//		Login login = loginRepository.findByEmail(email)
+//				.orElseThrow(() -> new RuntimeException("User not found"));
+//
+//		if (login.getResetToken() == null || !login.getResetToken().equals(resetToken) ||
+//				login.getResetTokenExpiry().isBefore(LocalDateTime.now())) {
+//			throw new RuntimeException("Invalid or expired reset token");
+//		}
+//
+//		login.setPassword(passwordEncoder.encode(newPassword));
+//		login.setResetToken(null);
+//		login.setResetTokenExpiry(null);
+//		loginRepository.save(login);
+//	}
+
+	@Value("${app.frontend.reset-url}")
+	private String frontendResetUrl;
 
 	public void requestPasswordReset(String email) {
 		Login login = loginRepository.findByEmail(email)
@@ -174,7 +240,8 @@ public class AuthService {
 		login.setResetTokenExpiry(LocalDateTime.now().plusHours(1));
 		loginRepository.save(login);
 
-		emailService.sendPasswordResetEmail(email, resetToken);
+		String resetLink = String.format("%s?token=%s&email=%s", frontendResetUrl, resetToken, email);
+		emailService.sendPasswordResetEmail(email, resetLink);
 	}
 
 	public void resetPassword(String email, String newPassword, String resetToken) {
