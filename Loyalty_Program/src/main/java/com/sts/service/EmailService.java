@@ -15,37 +15,6 @@ import java.util.Map;
 
 @Service
 public class EmailService {
-//    @Autowired
-//    private JavaMailSender mailSender;
-
-//    public void sendSimpleMessage(String to, String subject, String text) {
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setTo(to);
-//        message.setSubject(subject);
-//        message.setText(text);
-//        mailSender.send(message);
-//    }
-
-    @Autowired
-    private LoginRepository loginRepository;
-
-//    public void sendPasswordResetEmail(String email) throws MessagingException {
-//        Login login = loginRepository.findByEmail(email)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        String resetToken = UUID.randomUUID().toString();
-//        login.setResetToken(resetToken);
-//        login.setResetTokenExpiry(LocalDateTime.now().plusHours(1));
-//        loginRepository.save(login);
-//
-//        MimeMessage message = mailSender.createMimeMessage();
-//        MimeMessageHelper helper = new MimeMessageHelper(message, true);
-//        helper.setTo(email);
-//        helper.setSubject("Password Reset Request");
-//        helper.setText("Use this token to reset your password: " + resetToken + "\nThis token will expire in 1 hour.");
-//        mailSender.send(message);
-//    }
-
     @Value("${brevo.api.key}")
     private String apiKey;
 
@@ -60,11 +29,14 @@ public class EmailService {
 
     private final RestTemplate restTemplate;
 
+    @Autowired
+    private LoginRepository loginRepository;
+
     public EmailService() {
         this.restTemplate = new RestTemplate();
     }
 
-    public void sendPasswordResetEmail(String to, String resetToken) {
+    public void sendPasswordResetEmail(String to, String resetLink) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("api-key", apiKey);
         headers.set("Content-Type", "application/json");
@@ -73,11 +45,12 @@ public class EmailService {
         String htmlContent = String.format(
                 "<html><body>" +
                         "<h2>Password Reset Request</h2>" +
-                        "<p>Use this token to reset your password: <strong>%s</strong></p>" +
-                        "<p>This token will expire in 1 hour.</p>" +
-                        "<p>If you didn’t request this, ignore this email.</p>" +
+                        "<p>Click the link below to reset your password:</p>" +
+                        "<p><a href=\"%s\">Reset Password</a></p>" +
+                        "<p>This link will expire in 1 hour.</p>" +
+                        "<p>If you didn’t request this, please ignore this email.</p>" +
                         "</body></html>",
-                resetToken
+                resetLink
         );
 
         // Build request body

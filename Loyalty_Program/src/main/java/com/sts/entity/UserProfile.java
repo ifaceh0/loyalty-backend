@@ -35,7 +35,7 @@ public class UserProfile {
     @Column(name = "available_points")
     private Integer availablePoints;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "userId", insertable = false, updatable = false)
     private User user;
 }

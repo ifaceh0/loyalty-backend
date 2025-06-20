@@ -27,7 +27,6 @@ public class Shop {
     @Column(name = "company_phone", nullable = false, unique = true)
     private String companyPhone;
 
-
     @OneToOne(mappedBy = "shop", cascade = CascadeType.ALL)
     private Shopkeeper_Setting shopSetting;
 

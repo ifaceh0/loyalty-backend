@@ -44,16 +44,36 @@ public class AuthController {
 		return ResponseEntity.ok(authService.signin(request));
 	}
 
+//	@PostMapping("/forgot-password")
+//	public ResponseEntity<String> requestPasswordReset(@RequestBody @Valid PasswordResetRequest request) throws Exception {
+//		authService.requestPasswordReset(request.getEmail());
+//		return ResponseEntity.ok("Password reset email sent");
+//	}
+//
+//	@PostMapping("/reset-password")
+//	public ResponseEntity<String> resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
+//		authService.resetPassword(request.getEmail(), request.getNewPassword(), request.getResetToken());
+//		return ResponseEntity.ok("Password reset successful");
+//	}
+
 	@PostMapping("/forgot-password")
-	public ResponseEntity<String> requestPasswordReset(@RequestBody @Valid PasswordResetRequest request) throws Exception {
-		authService.requestPasswordReset(request.getEmail());
-		return ResponseEntity.ok("Password reset email sent");
+	public ResponseEntity<String> requestPasswordReset(@RequestBody @Valid PasswordResetRequest request) {
+		try {
+			authService.requestPasswordReset(request.getEmail());
+			return ResponseEntity.ok("Password reset email sent successfully");
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
 	}
 
 	@PostMapping("/reset-password")
 	public ResponseEntity<String> resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
-		authService.resetPassword(request.getEmail(), request.getNewPassword(), request.getResetToken());
-		return ResponseEntity.ok("Password reset successful");
+		try {
+			authService.resetPassword(request.getEmail(), request.getNewPassword(), request.getResetToken());
+			return ResponseEntity.ok("Password reset successful");
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
 	}
 
 }
