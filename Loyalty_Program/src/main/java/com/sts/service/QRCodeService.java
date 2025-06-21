@@ -175,7 +175,7 @@ public class QRCodeService {
 //			throw new RuntimeException("User is not associated with a shop");
 //		}
 //
-	
+
 //		UserProfile userProfile = userProfileRepository.findByUserIdAndShopId(userId, shop.getShopId())
 //				.orElseThrow(() -> new RuntimeException("User profile not found for shop"));
 //

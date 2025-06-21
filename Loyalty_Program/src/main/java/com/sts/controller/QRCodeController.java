@@ -122,6 +122,8 @@ public class QRCodeController {
 		qrData.put("userName", user.getFirstName() + " " + user.getLastName());
 		qrData.put("email", user.getEmail());
 		qrData.put("phone", user.getPhone());
+		qrData.put("customerId", user.getUserId());
+		qrData.put("shopName", shop.getShopName());
 		qrData.put("availableBalance", availableBalance);
 
 		String jsonContent = new ObjectMapper().writeValueAsString(qrData);
