@@ -115,6 +115,10 @@ public class AuthService {
 		login.setRole(Role.USER);
 		loginRepository.save(login);
 
+		//Send welcome email
+		String fullName = request.getFirstName() + " " + request.getLastName();
+		emailService.sendUserWelcomeEmail(request.getEmail(), fullName);
+
 		// Generate JWT
 		String token = jwtUtil.generateToken(login.getEmail(), login.getRole());
 		return new AuthResponse(token, "User registered successfully", user.getUserId());
@@ -147,6 +151,9 @@ public class AuthService {
 		login.setPassword(passwordEncoder.encode(request.getPassword()));
 		login.setRole(Role.SHOPKEEPER);
 		loginRepository.save(login);
+
+		// Send welcome email
+		emailService.sendShopkeeperWelcomeEmail(request.getEmail(), request.getShopName());
 
 		// Generate JWT
 		String token = jwtUtil.generateToken(login.getEmail(), login.getRole());
