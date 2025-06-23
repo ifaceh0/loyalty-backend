@@ -268,7 +268,7 @@ public class QRCodeController {
 				return ResponseEntity.badRequest().body("Invalid input: All fields are required and points must be > 0.");
 			}
 
-//			// Check if user and shop exist
+//			// Check if user and shop exist 
 //			Optional<User> userOpt = userRepository.findById(userId);
 //			Optional<Shop> shopOpt = shopRepository.findById(shopId);
 //			if (userOpt.isEmpty() || shopOpt.isEmpty()) {
