@@ -33,19 +33,6 @@ public class QRCodeController {
 
 	@Autowired
 	private UserProfileRepository userProfileRepository;
-	// code for show your qrcode in postman
-//	@GetMapping("/qr")
-//	public ResponseEntity<byte[]> getQRCode(@RequestParam String email) {
-//		try {
-//			byte[] qrImage = qrCodeService.generateUserQRCode(email);
-//			HttpHeaders headers = new HttpHeaders();
-//			headers.setContentType(MediaType.IMAGE_PNG);
-//
-//			return new ResponseEntity<>(qrImage, headers, HttpStatus.OK);
-//		} catch (Exception e) {
-//			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//		}
-//	}
 
 //	@PostMapping("/generate/{shopId}")
 //	public ResponseEntity<Map<String, Object>> generateQRCode(@PathVariable Long shopId) throws WriterException, IOException {
@@ -268,7 +255,7 @@ public class QRCodeController {
 				return ResponseEntity.badRequest().body("Invalid input: All fields are required and points must be > 0.");
 			}
 
-//			// Check if user and shop exist 
+//			// Check if user and shop exist
 //			Optional<User> userOpt = userRepository.findById(userId);
 //			Optional<Shop> shopOpt = shopRepository.findById(shopId);
 //			if (userOpt.isEmpty() || shopOpt.isEmpty()) {
