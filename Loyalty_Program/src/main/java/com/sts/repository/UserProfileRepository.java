@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface UserProfileRepository extends JpaRepository<UserProfile, UserProfileId> {
 //    Optional<UserProfile> findByUserIdAndShopId(Long userId, Long shopId);
-    List<UserProfile> findByUserId(Long userId);
+//    List<UserProfile> findByUserId(Long userId);
     UserProfile findByUserIdAndShopId(Long userId, Long shopId);
 }
 

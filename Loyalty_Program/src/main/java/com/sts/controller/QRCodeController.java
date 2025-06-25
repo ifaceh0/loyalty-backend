@@ -54,24 +54,6 @@ public class QRCodeController {
 //				.map(user -> user.getUserId())
 //				.orElseThrow(() -> new RuntimeException("User not found"));
 //	}
-//
-//	@GetMapping("/shops")
-//	@PreAuthorize("isAuthenticated()")
-//	public ResponseEntity<List<ShopResponseDto>> getAllShops(Authentication authentication) {
-//		// Fetch all shops from the database
-//		List<Shop> shops = shopRepository.findAll();
-//
-//		// Map to DTO
-//		List<ShopResponseDto> shopDtos = shops.stream().map(shop -> {
-//			ShopResponseDto dto = new ShopResponseDto();
-//			dto.setShopId(shop.getShopId());
-//			dto.setShopName(shop.getShopName());
-//			dto.setPhone(shop.getPhone());
-//			return dto;
-//		}).collect(Collectors.toList());
-//
-//		return ResponseEntity.ok(shopDtos);
-//	}
 
 	@GetMapping("/allShops")
 	public ResponseEntity<?> getAllShopsForUser(@RequestParam Long userId) {
@@ -131,35 +113,6 @@ public class QRCodeController {
 		return ResponseEntity.ok(response);
 	}
 
-
-//	@PostMapping("/decode")
-//	public ResponseEntity<?> processScannedQRCode(@RequestBody Map<String, Object> qrData) {
-//		String userName = (String) qrData.get("userName");
-//		String email = (String) qrData.get("email");
-//		String phone = (String) qrData.get("phone");
-//		Integer availableBalance = (Integer) qrData.get("availableBalance");
-//
-//		User user = userRepository.findByEmail(email).orElse(null);
-//		if (user == null) {
-//			return ResponseEntity.badRequest().body("User not found in system");
-//		}
-//
-//		UserProfile profile = userProfileRepository.findByUserIdAndShopId(
-//				user.getUserId(), user.getShop().getShopId()
-//		);
-//
-//		int verifiedBalance = (profile != null) ? profile.getAvailablePoints() : 0;
-//
-//		return ResponseEntity.ok(Map.of(
-//				"userId", user.getUserId(),
-//				"userName", userName,
-//				"email", email,
-//				"phone", phone,
-//				"verifiedBalance", verifiedBalance
-//		));
-//	}
-
-
 	@PostMapping("/decode")
 	public ResponseEntity<?> processScannedQRCode(@RequestBody Map<String, Object> qrData) {
 		try {
@@ -205,43 +158,6 @@ public class QRCodeController {
 					.body("Error processing QR code: " + e.getMessage());
 		}
 	}
-
-
-//	@PostMapping("/add-points")
-//	public ResponseEntity<?> addPointsToUserProfile(@RequestBody AddPointsRequest request) {
-//		try {
-//			Long userId = request.getUserId();
-//			Long shopId = request.getShopId();
-//			Integer pointsToAdd = request.getPointsToAdd();
-//
-//			if (userId == null || shopId == null || pointsToAdd == null || pointsToAdd <= 0) {
-//				return ResponseEntity.badRequest().body("Invalid input: All fields are required and points must be > 0.");
-//			}
-//
-//			UserProfile profile = userProfileRepository.findByUserIdAndShopId(userId, shopId);
-//
-//			if (profile == null) {
-//				return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//						.body("User is not associated with this shop.");
-//			}
-//
-//			int currentPoints = profile.getAvailablePoints() != null ? profile.getAvailablePoints() : 0;
-//			profile.setAvailablePoints(currentPoints + pointsToAdd);
-//			profile.setUpdatedAt(LocalDateTime.now());
-//
-//			userProfileRepository.save(profile);
-//
-//			return ResponseEntity.ok(Map.of(
-//					"message", "Points added successfully",
-//					"newBalance", profile.getAvailablePoints()
-//			));
-//
-//		} catch (Exception e) {
-//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//					.body("Error adding points: " + e.getMessage());
-//		}
-//	}
-
 
 	@PostMapping("/add-points")
 	public ResponseEntity<?> addPointsToUserProfile(@RequestBody AddPointsRequest request) {
