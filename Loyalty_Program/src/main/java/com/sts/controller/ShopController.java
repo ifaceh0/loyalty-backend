@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.sts.repository.UserProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,9 @@ public class ShopController {
 	
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private UserProfileRepository userProfileRepository;
 	
 	
 	@PostMapping("/saveShop")
@@ -59,44 +63,44 @@ public class ShopController {
 	}
 	
 
-	 @GetMapping("/userinfo-by-email")
-	    public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
-	        return userRepository.findByEmail(email)
-	                .map(user -> {
-	                    UserProfile profile = user.getUserProfile();
-
-	                    Map<String, Object> userInfo = new HashMap<>();
-	                    userInfo.put("firstName", user.getFirstName());
-	                    userInfo.put("lastName", user.getLastName());
-	                    userInfo.put("email", user.getEmail());
-	                    userInfo.put("phoneNumber", user.getPhone());
-	                    userInfo.put("availablePoints", profile != null ? profile.getAvailablePoints() : 0);
-
-	                    return ResponseEntity.ok(userInfo);
-	                })
-	                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "User not found")));
-	    }
-
-	 @GetMapping("/userinfo-by-phone")
-	 public ResponseEntity<Map<String, Object>>  getUserByPhone(@RequestParam String phone) {
-	     return userRepository.findByPhone(phone)
-	             .map(user -> {
-	                 UserProfile profile = user.getUserProfile();
-
-	                 
-	                 
-	                 Map<String, Object> userInfo = new HashMap<>();
-	                 userInfo.put("firstName", user.getFirstName());
-	                 userInfo.put("lastName", user.getLastName());
-	                 userInfo.put("email", user.getEmail());
-	                 userInfo.put("phoneNumber", user.getPhone());
-	                 userInfo.put("availablePoints", profile != null ? profile.getAvailablePoints() : 0);
-
-	                 return ResponseEntity.ok(userInfo);
-	             })
-	             .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-	                                   .body(Map.of("error", "User not found")));
-	 }
+//	 @GetMapping("/userinfo-by-email")
+//	    public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
+//	        return userRepository.findByEmail(email)
+//	                .map(user -> {
+//	                    UserProfile profile = user.getUserProfile();
+//
+//	                    Map<String, Object> userInfo = new HashMap<>();
+//	                    userInfo.put("firstName", user.getFirstName());
+//	                    userInfo.put("lastName", user.getLastName());
+//	                    userInfo.put("email", user.getEmail());
+//	                    userInfo.put("phoneNumber", user.getPhone());
+//	                    userInfo.put("availablePoints", profile != null ? profile.getAvailablePoints() : 0);
+//
+//	                    return ResponseEntity.ok(userInfo);
+//	                })
+//	                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "User not found")));
+//	    }
+//
+//	 @GetMapping("/userinfo-by-phone")
+//	 public ResponseEntity<Map<String, Object>>  getUserByPhone(@RequestParam String phone) {
+//	     return userRepository.findByPhone(phone)
+//	             .map(user -> {
+//	                 UserProfile profile = user.getUserProfile();
+//
+//
+//
+//	                 Map<String, Object> userInfo = new HashMap<>();
+//	                 userInfo.put("firstName", user.getFirstName());
+//	                 userInfo.put("lastName", user.getLastName());
+//	                 userInfo.put("email", user.getEmail());
+//	                 userInfo.put("phoneNumber", user.getPhone());
+//	                 userInfo.put("availablePoints", profile != null ? profile.getAvailablePoints() : 0);
+//
+//	                 return ResponseEntity.ok(userInfo);
+//	             })
+//	             .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
+//	                                   .body(Map.of("error", "User not found")));
+//	 }
 	 
 	 /*@GetMapping("/user-by-qr")
 	 public ResponseEntity<?> getUserByQrCode(@RequestParam String code) {
@@ -141,22 +145,22 @@ public class ShopController {
 	 
 	 
 	 
-	 @GetMapping("/user-by-qr")
-	 public ResponseEntity<?> getUserByQrToken(@RequestParam("token") String token) {
-	     Optional<User> userOptional = userService.getUserByQrToken(token);
-	     if (userOptional.isPresent()) {
-	         User user = userOptional.get();
-	         Map<String, Object> response = new HashMap<>();
-	         response.put("firstName", user.getFirstName());
-	         response.put("lastName", user.getLastName());
-	         response.put("email", user.getEmail());
-	         response.put("phoneNumber", user.getPhone());
-	         response.put("qrToken", user.getQrToken());
-	         return ResponseEntity.ok(response);
-	     } else {
-	         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found for provided QR token.");
-	     }
-	 }
+//	 @GetMapping("/user-by-qr")
+//	 public ResponseEntity<?> getUserByQrToken(@RequestParam("token") String token) {
+//	     Optional<User> userOptional = userService.getUserByQrToken(token);
+//	     if (userOptional.isPresent()) {
+//	         User user = userOptional.get();
+//	         Map<String, Object> response = new HashMap<>();
+//	         response.put("firstName", user.getFirstName());
+//	         response.put("lastName", user.getLastName());
+//	         response.put("email", user.getEmail());
+//	         response.put("phoneNumber", user.getPhone());
+//	         response.put("qrToken", user.getQrToken());
+//	         return ResponseEntity.ok(response);
+//	     } else {
+//	         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found for provided QR token.");
+//	     }
+//	 }
 
 	}
 
