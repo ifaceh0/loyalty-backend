@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.sts.dto.ShopkeeperSettingDTO;
 import com.sts.repository.UserProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -61,7 +62,23 @@ public class ShopController {
 				.orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
 						.body(null));	
 	}
-	
+
+	@GetMapping("/get-setting/{shopId}")
+	public ResponseEntity<ShopkeeperSettingDTO> getSetting(@PathVariable Long shopId) {
+		ShopkeeperSettingDTO dto = shopService.getSetting(shopId);
+		if (dto != null) {
+			return ResponseEntity.ok(dto);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
+
+	@PostMapping("/update-setting")
+	public ResponseEntity<Void> saveSetting(@RequestBody ShopkeeperSettingDTO dto) {
+		shopService.saveSetting(dto);
+		return ResponseEntity.ok().build();
+	}
+
 
 //	 @GetMapping("/userinfo-by-email")
 //	    public ResponseEntity<?> getUserByEmail(@RequestParam String email) {

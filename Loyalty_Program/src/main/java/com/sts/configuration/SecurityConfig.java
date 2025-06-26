@@ -24,6 +24,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/qrcode/**").permitAll()
+                        .requestMatchers("/api/shop/**").permitAll()
+                        .requestMatchers("/api/dashboard/**").permitAll()
+                        .requestMatchers("/api/subscriptions/**").permitAll()
+                        .requestMatchers("/api/user/**").permitAll()
                         .anyRequest().authenticated() // All other requests require authentication
                 )
                 .sessionManagement(session -> session
