@@ -4,9 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import com.sts.dto.ShopSignupRequest;
+import com.sts.dto.ShopkeeperSettingDTO;
 import com.sts.entity.Login;
+import com.sts.entity.Shopkeeper_Setting;
 import com.sts.enums.Role;
 import com.sts.repository.LoginRepository;
+import com.sts.repository.Shopkeeper_SettingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,9 @@ import com.sts.repository.ShopRepository;
 public class ShopService {
 	@Autowired
 	private ShopRepository shopRepository;
+
+	@Autowired
+	private Shopkeeper_SettingRepository shopkeeperSettingRepository;
 
 	@Autowired
 	private LoginRepository loginRepository;
@@ -37,33 +43,53 @@ public class ShopService {
 		shopRepository.deleteById(shopId);
 	}
 
-//	public Shop createShopkeeperAndLogin(ShopSignupRequest request) {
-//		if (shopRepository.existsByEmail(request.getEmail())) {
-//			throw new RuntimeException("Email already used !");
-//		}
-//		if (shopRepository.existsByPhone(request.getPhone())) {
-//			throw new RuntimeException("PhoneNumber already used !");
-//		}
-//
-//		// Create Shop entity
-//		Shop shop = new Shop();
-//		shop.setShopName(request.getShopName());
-//		shop.setEmail(request.getEmail());
-//		shop.setPhone(request.getPhone());
-//		shop.setCompanyEmail(request.getCompanyEmail());
-//		shop.setCompanyPhone(request.getCompanyPhone());
-//		shop.setCompanyName(request.getCompanyName());
-//		shop.setCompanyAddress(request.getCompanyAddress());
-//		shopRepository.save(shop);
-//
-//
-//		// Save Login entity
-//		Login login = new Login();
-//		login.setRole(Role.SHOPKEEPER);
-//		login.setEmail(request.getEmail());
-//		login.setPhone(request.getPhone());
-//		login.setPassword(request.getPassword());
-//		loginRepository.save(login);
-//		return shop;
-//	}
+
+
+	public ShopkeeperSettingDTO getSetting(Long shopId) {
+//		Shopkeeper_Setting setting =shopkeeperSettingRepository.findByShop_Id(shopId).orElse(null);
+
+		return shopkeeperSettingRepository.findByShop_ShopId(shopId)
+				.map(this::toDTO)
+				.orElse(null);
+	}
+
+	public void saveSetting(ShopkeeperSettingDTO dto) {
+		Shopkeeper_Setting setting = shopkeeperSettingRepository.findByShop_ShopId(dto.getShopId())
+				.orElse(new Shopkeeper_Setting());
+
+		Shop shop = shopRepository.findById(dto.getShopId())
+				.orElseThrow(() -> new RuntimeException("Shop not found"));
+
+		setting.setShop(shop);
+		setting.setDollarToPointMapping(dto.getDollarToPointMapping());
+		setting.setSign_upBonuspoints(dto.getSign_upBonuspoints());
+		setting.setMilestoneBonusAmount(dto.getMilestoneBonusAmount());
+		setting.setSpecialBonusName(dto.getSpecialBonusName());
+		setting.setSpecialBonusPoints(dto.getSpecialBonusPoints());
+		setting.setSpecialBonusStartDate(dto.getSpecialBonusStartDate());
+		setting.setSpecialBonusEndDate(dto.getSpecialBonusEndDate());
+		setting.setBonusdescription(dto.getBonusdescription());
+		setting.setBeginDate(dto.getBeginDate());
+		setting.setEndDate(dto.getEndDate());
+		setting.setAmountOff(dto.getAmountOff());
+
+		shopkeeperSettingRepository.save(setting);
+	}
+
+	private ShopkeeperSettingDTO toDTO(Shopkeeper_Setting setting) {
+		ShopkeeperSettingDTO dto = new ShopkeeperSettingDTO();
+		dto.setShopId(setting.getShop().getShopId());
+		dto.setDollarToPointMapping(setting.getDollarToPointMapping());
+		dto.setSign_upBonuspoints(setting.getSign_upBonuspoints());
+		dto.setMilestoneBonusAmount(setting.getMilestoneBonusAmount());
+		dto.setSpecialBonusName(setting.getSpecialBonusName());
+		dto.setSpecialBonusPoints(setting.getSpecialBonusPoints());
+		dto.setSpecialBonusStartDate(setting.getSpecialBonusStartDate());
+		dto.setSpecialBonusEndDate(setting.getSpecialBonusEndDate());
+		dto.setBonusdescription(setting.getBonusdescription());
+		dto.setBeginDate(setting.getBeginDate());
+		dto.setEndDate(setting.getEndDate());
+		dto.setAmountOff(setting.getAmountOff());
+		return dto;
+	}
 }
