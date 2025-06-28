@@ -3,8 +3,10 @@ import com.sts.entity.UserPurchase_History;
 import com.sts.entity.UserPurchase_Id;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ShopDashboardRepository extends JpaRepository<UserPurchase_History,UserPurchase_Id> {
@@ -29,5 +31,19 @@ public interface ShopDashboardRepository extends JpaRepository<UserPurchase_Hist
             "GROUP BY u.user_id, u.first_name, u.last_name, u.email, u.phone_number " +
             "ORDER BY total_spent DESC LIMIT 5", nativeQuery = true)
     List<Object[]> getTopSpendingUsers(Long shopId);
+
+    // Monthly sales data (last 12 months)
+
+    @Query(
+            value = "SELECT EXTRACT(MONTH FROM purchase_date) AS month, " +
+                    "SUM(transaction_amount) AS total " +
+                    "FROM user_purchase_history " +
+                    "WHERE shop_id = :shopId AND purchase_date >= :startDate " +
+                    "GROUP BY EXTRACT(MONTH FROM purchase_date) " +
+                    "ORDER BY month",
+            nativeQuery = true
+    )
+    List<Object[]> getMonthlySalesByShopNative(@Param("shopId") Long shopId,
+                                               @Param("startDate") LocalDateTime startDate);
 }
 
