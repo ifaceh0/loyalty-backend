@@ -45,5 +45,12 @@ public interface ShopDashboardRepository extends JpaRepository<UserPurchase_Hist
     )
     List<Object[]> getMonthlySalesByShopNative(@Param("shopId") Long shopId,
                                                @Param("startDate") LocalDateTime startDate);
+
+    // Customer count comparison like-Current vs 1 month/3 months/6months/12 months
+    @Query(value = """
+    SELECT COUNT(DISTINCT user_id) FROM user_purchase_history 
+    WHERE shop_id = :shopId AND purchase_date >= :date
+    """, nativeQuery = true)
+    int countDistinctUsersSince(@Param("shopId") Long shopId, @Param("date") LocalDateTime date);
 }
 

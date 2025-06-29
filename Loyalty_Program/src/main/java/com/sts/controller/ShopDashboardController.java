@@ -24,4 +24,12 @@ public class ShopDashboardController {
         Map<String, Integer> data = dashboardService.getMonthlySalesData(shopId);
         return ResponseEntity.ok(data);
     }
+
+
+   // Customer count comparison like-Current vs 1 month/3 months/6months/12 months
+   @GetMapping("/customerCount/{shopId}")
+   public ResponseEntity<Map<String, Integer>> getCustomerCountComparison(@PathVariable Long shopId) {
+       Map<String, Integer> data = dashboardService.getCustomerComparison(shopId);
+       return ResponseEntity.ok(data);
+   }
 }

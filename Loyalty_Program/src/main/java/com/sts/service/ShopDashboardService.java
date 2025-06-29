@@ -77,4 +77,17 @@ public class ShopDashboardService{
 
         return chartData;
     }
+    // Customer count comparison like-Current vs 1 month/3 months/6months/12 months
+    public Map<String, Integer> getCustomerComparison(Long shopId) {
+        LocalDateTime now = LocalDateTime.now();
+        Map<String, Integer> comparison = new LinkedHashMap<>();
+
+        comparison.put("Current Month", dashboardRepository.countDistinctUsersSince(shopId, now.withDayOfMonth(1)));
+        comparison.put("Last 1 Month", dashboardRepository.countDistinctUsersSince(shopId, now.minusMonths(1)));
+        comparison.put("Last 3 Months", dashboardRepository.countDistinctUsersSince(shopId, now.minusMonths(3)));
+        comparison.put("Last 6 Months", dashboardRepository.countDistinctUsersSince(shopId, now.minusMonths(6)));
+        comparison.put("Last 12 Months", dashboardRepository.countDistinctUsersSince(shopId, now.minusMonths(12)));
+
+        return comparison;
+    }
 }
