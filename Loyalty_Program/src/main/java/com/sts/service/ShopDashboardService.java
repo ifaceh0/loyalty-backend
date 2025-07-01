@@ -1,13 +1,17 @@
 package com.sts.service;
 
+import com.sts.dto.MonthlyUserStatsDTO;
 import com.sts.repository.ShopDashboardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ShopDashboardService{
@@ -83,11 +87,56 @@ public class ShopDashboardService{
         Map<String, Integer> comparison = new LinkedHashMap<>();
 
         comparison.put("Current Month", dashboardRepository.countDistinctUsersSince(shopId, now.withDayOfMonth(1)));
-        comparison.put("Last 1 Month", dashboardRepository.countDistinctUsersSince(shopId, now.minusMonths(1)));
+//        comparison.put("Last 1 Month", dashboardRepository.countDistinctUsersSince(shopId, now.minusMonths(1)));
         comparison.put("Last 3 Months", dashboardRepository.countDistinctUsersSince(shopId, now.minusMonths(3)));
         comparison.put("Last 6 Months", dashboardRepository.countDistinctUsersSince(shopId, now.minusMonths(6)));
         comparison.put("Last 12 Months", dashboardRepository.countDistinctUsersSince(shopId, now.minusMonths(12)));
 
         return comparison;
     }
+
+    //find number of register user and active user
+
+    public List<MonthlyUserStatsDTO> getMonthlyStats(Long shopId) {
+        List<Object[]> regList = dashboardRepository.getMonthlyRegisteredUsers(shopId);
+        List<Object[]> visitList = dashboardRepository.getMonthlyVisitedUsers(shopId);
+
+        Map<Integer, Long> regMap = regList.stream()
+                .collect(Collectors.toMap(
+                        obj -> toInteger(obj[0]),
+                        obj -> toLong(obj[1])
+                ));
+
+        Map<Integer, Long> visitMap = visitList.stream()
+                .collect(Collectors.toMap(
+                        obj -> toInteger(obj[0]),
+                        obj -> toLong(obj[1])
+                ));
+
+        List<MonthlyUserStatsDTO> result = new ArrayList<>();
+        for (int i = 1; i <= 12; i++) {
+            String monthName = Month.of(i).getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+            long registered = regMap.getOrDefault(i, 0L);
+            long visited = visitMap.getOrDefault(i, 0L);
+            result.add(new MonthlyUserStatsDTO(monthName, registered, visited));
+        }
+
+        return result;
+    }
+
+    private int toInteger(Object obj) {
+        if (obj instanceof BigDecimal) return ((BigDecimal) obj).intValue();
+        if (obj instanceof Long) return ((Long) obj).intValue();
+        if (obj instanceof Integer) return (Integer) obj;
+        throw new IllegalArgumentException("Unexpected type for Integer: " + obj.getClass());
+    }
+
+    private long toLong(Object obj) {
+        if (obj instanceof BigDecimal) return ((BigDecimal) obj).longValue();
+        if (obj instanceof Long) return (Long) obj;
+        if (obj instanceof Integer) return ((Integer) obj).longValue();
+        throw new IllegalArgumentException("Unexpected type for Long: " + obj.getClass());
+    }
+
+
 }
