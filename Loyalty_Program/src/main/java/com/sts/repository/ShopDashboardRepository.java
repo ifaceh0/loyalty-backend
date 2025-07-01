@@ -50,5 +50,20 @@ public interface ShopDashboardRepository extends JpaRepository<UserPurchase_Hist
     WHERE shop_id = :shopId AND purchase_date >= :date
     """, nativeQuery = true)
     int countDistinctUsersSince(@Param("shopId") Long shopId, @Param("date") LocalDateTime date);
+
+    //find number of register user and active user
+    @Query(value = "SELECT EXTRACT(MONTH FROM created_date) AS month, COUNT(user_id) " +
+            "FROM users " +
+            "WHERE shop_id = :shopId " +
+            "GROUP BY month " +
+            "ORDER BY month", nativeQuery = true)
+    List<Object[]> getMonthlyRegisteredUsers(@Param("shopId") Long shopId);
+
+    @Query(value = "SELECT EXTRACT(MONTH FROM purchase_date) AS month, COUNT(DISTINCT user_id) " +
+            "FROM user_purchase_history " +
+            "WHERE shop_id = :shopId " +
+            "GROUP BY month " +
+            "ORDER BY month", nativeQuery = true)
+    List<Object[]> getMonthlyVisitedUsers(@Param("shopId") Long shopId);
 }
 
