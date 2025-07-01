@@ -2,9 +2,8 @@ package com.sts.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sts.QrcodeGenerator.QrCodeGenerator;
 import com.sts.dto.AddPointsRequest;
-import com.sts.entity.Shop;
-import com.sts.entity.User;
-import com.sts.entity.UserProfile;
+import com.sts.dto.PurchaseRequestDTO;
+import com.sts.entity.*;
 import com.sts.repository.ShopRepository;
 import com.sts.repository.UserProfileRepository;
 import com.sts.repository.UserRepository;
@@ -33,27 +32,6 @@ public class QRCodeController {
 
 	@Autowired
 	private UserProfileRepository userProfileRepository;
-
-//	@PostMapping("/generate/{shopId}")
-//	public ResponseEntity<Map<String, Object>> generateQRCode(@PathVariable Long shopId) throws WriterException, IOException {
-//		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//		String email = authentication.getName();
-//		Long userId = getUserIdFromEmail(email); // Implement this
-//		Map<String, Object> response = qrCodeService.generateQRCode(userId, shopId);
-//		return ResponseEntity.ok(response);
-//	}
-//
-//	@GetMapping("/scan/{qrToken}")
-//	public ResponseEntity<Map<String, Object>> scanQRCode(@PathVariable String qrToken) {
-//		Map<String, Object> userDetails = qrCodeService.getUserDetailsFromQRToken(qrToken);
-//		return ResponseEntity.ok(userDetails);
-//	}
-//
-//	private Long getUserIdFromEmail(String email) {
-//		return userRepository.findByEmail(email)
-//				.map(user -> user.getUserId())
-//				.orElseThrow(() -> new RuntimeException("User not found"));
-//	}
 
 	@GetMapping("/allShops")
 	public ResponseEntity<?> getAllShopsForUser(@RequestParam Long userId) {
@@ -209,4 +187,15 @@ public class QRCodeController {
 		}
 	}
 
+	@PostMapping("/add-dollars")
+	public ResponseEntity<String> savePurchase(@RequestBody PurchaseRequestDTO request) {
+		try {
+			qrCodeService.savePurchase(request);
+			return ResponseEntity.ok("Purchase history saved successfully.");
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		} catch (Exception e) {
+			return ResponseEntity.internalServerError().body("An unexpected error occurred.");
+		}
+	}
 }

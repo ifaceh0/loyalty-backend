@@ -1,15 +1,13 @@
 package com.sts.repository;
 import com.sts.entity.UserPurchase_History;
-import com.sts.entity.UserPurchase_Id;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface ShopDashboardRepository extends JpaRepository<UserPurchase_History,UserPurchase_Id> {
+public interface ShopDashboardRepository extends JpaRepository<UserPurchase_History, Long> {
     // 1. Total number of users per shop
     @Query(value = "SELECT COUNT(*) FROM users WHERE shop_id = :shopId", nativeQuery = true)
     Long getUserCountByShopId(Long shopId);
