@@ -13,19 +13,18 @@ import lombok.Data;
 @Entity
 @Data
 public class UserPurchase_History {
-	@EmbeddedId
-    private UserPurchase_Id purchaseId;
-	
-	// Many purchase history records belong to one User
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment primary key
+    private Long id;
+
     @ManyToOne
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    // Many purchase history records belong to one Shop
+
     @ManyToOne
-    @JoinColumn(name = "shop_id", insertable = false, updatable = false)
+    @JoinColumn(name = "shop_id", nullable = false)
     private Shop shop;
 
-    // Optional: timestamp of purchase
     private LocalDateTime purchaseDate;
 
     private Integer transactionAmount;

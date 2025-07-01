@@ -9,8 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface UserPurchaseHistory_Repository extends JpaRepository<UserPurchase_History, Long>
-{
+public interface UserPurchaseHistory_Repository extends JpaRepository<UserPurchase_History, Long> {
 
 }
 
