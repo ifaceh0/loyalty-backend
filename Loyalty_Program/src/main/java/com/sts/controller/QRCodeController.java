@@ -188,14 +188,14 @@ public class QRCodeController {
 	}
 
 	@PostMapping("/add-dollars")
-	public ResponseEntity<String> savePurchase(@RequestBody PurchaseRequestDTO request) {
+	public ResponseEntity<Map<String, String>> savePurchase(@RequestBody PurchaseRequestDTO request) {
 		try {
 			qrCodeService.savePurchase(request);
-			return ResponseEntity.ok("Purchase history saved successfully.");
+			return ResponseEntity.ok(Map.of("message", "Purchase history saved successfully."));
 		} catch (RuntimeException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
+			return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
 		} catch (Exception e) {
-			return ResponseEntity.internalServerError().body("An unexpected error occurred.");
+			return ResponseEntity.internalServerError().body(Map.of("message", "An unexpected error occurred."));
 		}
 	}
 }
