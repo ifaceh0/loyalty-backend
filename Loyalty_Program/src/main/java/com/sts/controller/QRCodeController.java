@@ -6,6 +6,7 @@ import com.sts.dto.PurchaseRequestDTO;
 import com.sts.entity.*;
 import com.sts.repository.ShopRepository;
 import com.sts.repository.UserProfileRepository;
+import com.sts.repository.UserPurchaseHistory_Repository;
 import com.sts.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,9 @@ public class QRCodeController {
 
 	@Autowired
 	private UserProfileRepository userProfileRepository;
+
+    @Autowired
+    private UserPurchaseHistory_Repository historyRepository;
 
 	@GetMapping("/allShops")
 	public ResponseEntity<?> getAllShopsForUser(@RequestParam Long userId) {
@@ -137,65 +141,56 @@ public class QRCodeController {
 		}
 	}
 
-	@PostMapping("/add-points")
-	public ResponseEntity<?> addPointsToUserProfile(@RequestBody AddPointsRequest request) {
-		try {
-			Long userId = request.getUserId();
-			Long shopId = request.getShopId();
-			Integer pointsToAdd = request.getPointsToAdd();
+    @PostMapping("/add-points")
+    public ResponseEntity<?> addPointsToUserProfile(@RequestBody AddPointsRequest request) {
+        try {
+            Long userId = request.getUserId();
+            Long shopId = request.getShopId();
+            Integer pointsToAdd = request.getPointsToAdd();
+            Integer dollarAmount = request.getDollarAmount(); // <-- Add this field to the request DTO
 
-			// Validate input
-			if (userId == null || shopId == null || pointsToAdd == null || pointsToAdd <= 0) {
-				return ResponseEntity.badRequest().body("Invalid input: All fields are required and points must be > 0.");
-			}
+            if (userId == null || shopId == null || pointsToAdd == null || pointsToAdd <= 0
+                    || dollarAmount == null || dollarAmount <= 0) {
+                return ResponseEntity.badRequest().body("Invalid input: All fields required and must be > 0.");
+            }
 
-//			// Check if user and shop exist
-//			Optional<User> userOpt = userRepository.findById(userId);
-//			Optional<Shop> shopOpt = shopRepository.findById(shopId);
-//			if (userOpt.isEmpty() || shopOpt.isEmpty()) {
-//				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user or shop ID.");
-//			}
+            // 1. Update UserProfile
+            UserProfile profile = userProfileRepository.findByUserIdAndShopId(userId, shopId);
+            if (profile == null) {
+                profile = new UserProfile();
+                profile.setUserId(userId);
+                profile.setShopId(shopId);
+                profile.setAvailablePoints(0);
+                profile.setCreatedAt(LocalDateTime.now());
+            }
 
-			UserProfile profile = userProfileRepository.findByUserIdAndShopId(userId, shopId);
+            int currentPoints = profile.getAvailablePoints();
+            profile.setAvailablePoints(currentPoints + pointsToAdd);
+            profile.setUpdatedAt(LocalDateTime.now());
 
-			// Create new profile if not present
-			if (profile == null) {
-				profile = new UserProfile();
-				profile.setUserId(userId);
-				profile.setShopId(shopId);
-				profile.setAvailablePoints(0);
-				profile.setCreatedAt(LocalDateTime.now());
-			}
+            userProfileRepository.save(profile);
 
-			// Update balance and timestamp
-//			int currentPoints = profile.getAvailablePoints() != null ? profile.getAvailablePoints() : 0;
-			int currentPoints = profile.getAvailablePoints();
-			profile.setAvailablePoints(currentPoints + pointsToAdd);
-			profile.setUpdatedAt(LocalDateTime.now());
+            // 2. Add record to UserPurchase_History
+            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+            Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new RuntimeException("Shop not found"));
 
-			// Save profile
-			userProfileRepository.save(profile);
+            UserPurchase_History history = new UserPurchase_History();
+            history.setUser(user);
+            history.setShop(shop);
+            history.setTransactionAmount(dollarAmount);
+            history.setGivenPoints(pointsToAdd);
+            history.setPurchaseDate(LocalDateTime.now());
 
-			return ResponseEntity.ok(Map.of(
-					"message", "Points added successfully",
-					"newBalance", profile.getAvailablePoints()
-			));
+            historyRepository.save(history);
 
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("Error adding points: " + e.getMessage());
-		}
-	}
+            return ResponseEntity.ok(Map.of(
+                    "message", "Points and purchase history added successfully",
+                    "newBalance", profile.getAvailablePoints()
+            ));
 
-	@PostMapping("/add-dollars")
-	public ResponseEntity<Map<String, String>> savePurchase(@RequestBody PurchaseRequestDTO request) {
-		try {
-			qrCodeService.savePurchase(request);
-			return ResponseEntity.ok(Map.of("message", "Purchase history saved successfully."));
-		} catch (RuntimeException e) {
-			return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-		} catch (Exception e) {
-			return ResponseEntity.internalServerError().body(Map.of("message", "An unexpected error occurred."));
-		}
-	}
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error adding points: " + e.getMessage());
+        }
+    }
 }

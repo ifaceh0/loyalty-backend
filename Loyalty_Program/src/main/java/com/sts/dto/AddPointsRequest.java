@@ -7,4 +7,5 @@ public class AddPointsRequest {
     private Long userId;
     private Long shopId;
     private Integer pointsToAdd;
+    private Integer dollarAmount;
 }

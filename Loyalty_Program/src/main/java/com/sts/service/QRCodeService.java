@@ -36,19 +36,19 @@ public class QRCodeService {
 
 	@Autowired
 	private UserPurchaseHistory_Repository historyRepository;
-
-	public void savePurchase(PurchaseRequestDTO request) {
-		User user = userRepository.findById(request.getUserId())
-				.orElseThrow(() -> new RuntimeException("User not found"));
-		Shop shop = shopRepository.findById(request.getShopId())
-				.orElseThrow(() -> new RuntimeException("Shop not found"));
-
-		UserPurchase_History history = new UserPurchase_History();
-		history.setUser(user);
-		history.setShop(shop);
-		history.setTransactionAmount(request.getTransactionAmount());
-		history.setPurchaseDate(LocalDateTime.now());
-
-		historyRepository.save(history);
-	}
+//
+//	public void savePurchase(PurchaseRequestDTO request) {
+//		User user = userRepository.findById(request.getUserId())
+//				.orElseThrow(() -> new RuntimeException("User not found"));
+//		Shop shop = shopRepository.findById(request.getShopId())
+//				.orElseThrow(() -> new RuntimeException("Shop not found"));
+//
+//		UserPurchase_History history = new UserPurchase_History();
+//		history.setUser(user);
+//		history.setShop(shop);
+//		history.setTransactionAmount(request.getTransactionAmount());
+//		history.setPurchaseDate(LocalDateTime.now());
+//
+//		historyRepository.save(history);
+//	}
 }

@@ -28,4 +28,6 @@ public class UserPurchase_History {
     private LocalDateTime purchaseDate;
 
     private Integer transactionAmount;
+
+    private Integer givenPoints;
 }
