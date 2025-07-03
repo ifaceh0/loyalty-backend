@@ -1,6 +1,5 @@
 package com.sts.repository;
 
-import com.sts.dto.UserDashboardDTO;
 import com.sts.entity.UserPurchase_History;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
