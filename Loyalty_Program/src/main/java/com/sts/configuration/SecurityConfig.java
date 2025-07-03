@@ -26,7 +26,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/qrcode/**").permitAll()
                         .requestMatchers("/api/shop/**").permitAll()
                         .requestMatchers("/api/dashboard/**").permitAll()
-                        .requestMatchers("/api/userDashboard").permitAll()
+                        .requestMatchers("/api/userDashboard/**").permitAll()
                         .requestMatchers("/api/subscriptions/**").permitAll()
                         .requestMatchers("/api/user/**").permitAll()
                         .anyRequest().authenticated() // All other requests require authentication
