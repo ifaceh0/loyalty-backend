@@ -1,14 +1,14 @@
 package com.sts.service;
 
+import com.sts.dto.ReferralInviteRequest;
 import com.sts.repository.LoginRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -145,5 +145,62 @@ public class EmailService {
         }
     }
 
+    @Value("${loyalty.app.url}")
+    private String loyaltyAppUrl;
+    public ResponseEntity<Map<String, Object>> sendReferralEmail(ReferralInviteRequest request) {
+        Map<String, Object> emailBody = new HashMap<>();
 
+        // Sender info
+        Map<String, String> sender = new HashMap<>();
+        sender.put("name", senderName);
+        sender.put("email", senderEmail);
+        emailBody.put("sender", sender);
+
+        // Recipient info
+        List<Map<String, String>> to = new ArrayList<>();
+        Map<String, String> recipient = new HashMap<>();
+        recipient.put("email", request.getEmail());
+        to.add(recipient);
+        emailBody.put("to", to);
+
+        // Referral link with shopId as query param (not shown to user)
+        String referralLink = loyaltyAppUrl + "signup-user?referralShopId=" + request.getShopId();
+
+        // Email Subject and HTML body
+        emailBody.put("subject", "You're Invited to Join Our Loyalty Rewards Program!");
+
+        emailBody.put("htmlContent",
+                "<h2 style='color:#333;'>Hey there 👋</h2>" +
+                        "<p><strong>" + request.getShopName() + "</strong> has invited you to join our exclusive Loyalty Rewards Program.</p>" +
+                        "<p>Earn points on every purchase and redeem exciting rewards!</p>" +
+                        "<p style='margin: 20px 0;'>" +
+                        "<a href='" + referralLink + "' " +
+                        "style='display:inline-block;padding:12px 20px;background-color:#6c5ce7;color:#fff;" +
+                        "text-decoration:none;border-radius:8px;font-weight:600;'>Join Now</a></p>" +
+                        "<p>If the button doesn't work, use this link:</p>" +
+                        "<p><a href='" + referralLink + "'>" + referralLink + "</a></p>" +
+                        "<br/><p>Thanks & Happy Earning!<br/>💜 Loyalty Rewards Team</p>"
+        );
+
+        // Headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("api-key", apiKey);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(emailBody, headers);
+
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(apiUrl + "/smtp/email", entity, String.class);
+            Map<String, Object> result = new HashMap<>();
+            result.put("status", response.getStatusCodeValue());
+            result.put("message", "Referral email sent successfully.");
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("status", 500);
+            error.put("message", "Failed to send referral email.");
+            error.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
 }

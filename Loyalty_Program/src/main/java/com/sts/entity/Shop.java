@@ -30,7 +30,7 @@ public class Shop {
     @OneToOne(mappedBy = "shop", cascade = CascadeType.ALL)
     private Shopkeeper_Setting shopSetting;
 
-    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "referredBy", cascade = CascadeType.ALL)
     private Set<User> users;
 
     private String stripeCustomerId;
