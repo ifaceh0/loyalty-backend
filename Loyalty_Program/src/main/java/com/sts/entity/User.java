@@ -17,8 +17,8 @@ public class User {
     private Long userId;
 
     @ManyToOne
-    @JoinColumn(name = "shopId", referencedColumnName = "shopId")
-    private Shop shop;
+    @JoinColumn(name = "referred_by_shop_id", referencedColumnName = "shopId")
+    private Shop referredBy;
 
     private String firstName;
     private String lastName;
