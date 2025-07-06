@@ -50,7 +50,7 @@ public class UserController {
     
     
  //  GET: Get user by QR token
-    @GetMapping("/user-by-qr")
+   /* @GetMapping("/user-by-qr")
     public ResponseEntity<?> getUserByQrToken(@RequestParam("token") String token) {
         Optional<User> userOpt = userService.getUserByQrToken(token);
         if (userOpt.isPresent()) {
@@ -66,7 +66,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
     }
-	
+	*/
 //	@GetMapping("/fetchUserById/{userId}")
 //	public ResponseEntity<User> getUserById(@PathVariable Long userId){
 //		return userService.getUserById(userId)
