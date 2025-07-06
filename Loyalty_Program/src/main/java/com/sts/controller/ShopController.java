@@ -109,6 +109,7 @@ public class ShopController {
 								.orElse(List.of());
 						UserProfile profile = profiles.isEmpty() ? null : profiles.get(0);
 
+
 						Map<String, Object> userInfo = new HashMap<>();
 						userInfo.put("userId", user.getUserId());
 						userInfo.put("firstName", user.getFirstName());
