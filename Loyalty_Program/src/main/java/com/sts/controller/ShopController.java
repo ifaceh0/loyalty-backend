@@ -80,44 +80,124 @@ public class ShopController {
 	}
 
 
-//	 @GetMapping("/userinfo-by-email")
-//	    public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
-//	        return userRepository.findByEmail(email)
-//	                .map(user -> {
-//	                    UserProfile profile = user.getUserProfile();
-//
-//	                    Map<String, Object> userInfo = new HashMap<>();
-//	                    userInfo.put("firstName", user.getFirstName());
-//	                    userInfo.put("lastName", user.getLastName());
-//	                    userInfo.put("email", user.getEmail());
-//	                    userInfo.put("phoneNumber", user.getPhone());
-//	                    userInfo.put("availablePoints", profile != null ? profile.getAvailablePoints() : 0);
-//
-//	                    return ResponseEntity.ok(userInfo);
-//	                })
-//	                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "User not found")));
-//	    }
-//
-//	 @GetMapping("/userinfo-by-phone")
-//	 public ResponseEntity<Map<String, Object>>  getUserByPhone(@RequestParam String phone) {
-//	     return userRepository.findByPhone(phone)
-//	             .map(user -> {
-//	                 UserProfile profile = user.getUserProfile();
-//
-//
-//
-//	                 Map<String, Object> userInfo = new HashMap<>();
-//	                 userInfo.put("firstName", user.getFirstName());
-//	                 userInfo.put("lastName", user.getLastName());
-//	                 userInfo.put("email", user.getEmail());
-//	                 userInfo.put("phoneNumber", user.getPhone());
-//	                 userInfo.put("availablePoints", profile != null ? profile.getAvailablePoints() : 0);
-//
-//	                 return ResponseEntity.ok(userInfo);
-//	             })
-//	             .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-//	                                   .body(Map.of("error", "User not found")));
-//	 }
+	/* @GetMapping("/userinfo-by-email")
+	    public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
+	        return userRepository.findByEmail(email)
+	                .map(user -> {
+                    UserProfile profile = user.getUserProfile();
+
+	                    Map<String, Object> userInfo = new HashMap<>();
+	                    userInfo.put("firstName", user.getFirstName());
+	                    userInfo.put("lastName", user.getLastName());
+	                    userInfo.put("email", user.getEmail());
+	                    userInfo.put("phoneNumber", user.getPhone());userInfo.put("availablePoints", profile != null ? profile.getAvailablePoints() : 0);
+
+	                    return ResponseEntity.ok(userInfo);
+	                })
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "User not found")));
+    }*/
+
+
+
+	@GetMapping("/email")
+	public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
+		try {
+			return userRepository.findByEmail(email)
+					.map(user -> {
+						// ensure profiles list isn't null
+						List<UserProfile> profiles = Optional.ofNullable(user.getUserProfiles())
+								.orElse(List.of());
+						UserProfile profile = profiles.isEmpty() ? null : profiles.get(0);
+
+
+						Map<String, Object> userInfo = new HashMap<>();
+						userInfo.put("userId", user.getUserId());
+						userInfo.put("firstName", user.getFirstName());
+						userInfo.put("lastName", user.getLastName());
+						userInfo.put("email", user.getEmail());
+						userInfo.put("phoneNumber", user.getPhone());
+						userInfo.put("availablePoints", profile != null ? profile.getAvailablePoints() : 0);
+
+						return ResponseEntity.ok(userInfo);
+					})
+					.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
+							.body(Map.of("error", "User not found")));
+
+		} catch (Exception ex) {
+			ex.printStackTrace();  // important for troubleshooting
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Map.of("error", "Internal server error: " + ex.getMessage()));
+		}
+	}
+
+ 	/* @GetMapping("/userinfo-by-phone")
+	 public ResponseEntity<Map<String, Object>>  getUserByPhone(@RequestParam String phone) {
+	     return userRepository.findByPhone(phone)
+	             .map(user -> {
+	                 UserProfile profile = user.getUserProfile();
+					 Map<String, Object> userInfo = new HashMap<>();
+	                 userInfo.put("firstName", user.getFirstName());
+                 userInfo.put("lastName", user.getLastName());
+	                 userInfo.put("email", user.getEmail());
+	                 userInfo.put("phoneNumber", user.getPhone());
+	                 userInfo.put("availablePoints", profile != null ? profile.getAvailablePoints() : 0);
+
+                 return ResponseEntity.ok(userInfo);
+	             })
+	             .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                                   .body(Map.of("error", "User not found")));
+	 }*/
+/*@GetMapping("/userinfo-by-phone")
+public ResponseEntity<Map<String, Object>> getUserByPhone(@RequestParam String phone) {
+	return userRepository.findByPhone(phone)
+			.map(user -> {
+				List<UserProfile> profiles = user.getUserProfiles();
+				UserProfile profile = (profiles != null && !profiles.isEmpty()) ? profiles.get(0) : null;
+
+				Map<String, Object> userInfo = new HashMap<>();
+				userInfo.put("firstName", user.getFirstName());
+				userInfo.put("lastName", user.getLastName());
+				userInfo.put("email", user.getEmail());
+				userInfo.put("phoneNumber", user.getPhone());
+				userInfo.put("userId", user.getUserId());
+				userInfo.put("availablePoints", profile != null ? profile.getAvailablePoints() : 0);
+
+				return ResponseEntity.ok(userInfo);
+			})
+			.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(Map.of("error", "User not found")));
+}
+*/
+@GetMapping("/phonenumber")
+public ResponseEntity<?> getUserByPhone(@RequestParam String phone) {
+	try {
+		return userRepository.findByPhone(phone)
+				.map(user -> {
+					// ensure profiles list isn't null
+					List<UserProfile> profiles = Optional.ofNullable(user.getUserProfiles())
+							.orElse(List.of());
+					UserProfile profile = profiles.isEmpty() ? null : profiles.get(0);
+
+					Map<String, Object> userInfo = new HashMap<>();
+					userInfo.put("userId", user.getUserId());
+					userInfo.put("firstName", user.getFirstName());
+					userInfo.put("lastName", user.getLastName());
+					userInfo.put("email", user.getEmail());
+					userInfo.put("phoneNumber", user.getPhone());
+					userInfo.put("availablePoints", profile != null ? profile.getAvailablePoints() : 0);
+
+					return ResponseEntity.ok(userInfo);
+				})
+				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
+						.body(Map.of("error", "User not found")));
+
+	} catch (Exception ex) {
+		ex.printStackTrace();  // important for troubleshooting
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(Map.of("error", "Internal server error: " + ex.getMessage()));
+	}
+}
+
 	 
 	 /*@GetMapping("/user-by-qr")
 	 public ResponseEntity<?> getUserByQrCode(@RequestParam String code) {
@@ -162,22 +242,22 @@ public class ShopController {
 	 
 	 
 	 
-//	 @GetMapping("/user-by-qr")
-//	 public ResponseEntity<?> getUserByQrToken(@RequestParam("token") String token) {
-//	     Optional<User> userOptional = userService.getUserByQrToken(token);
-//	     if (userOptional.isPresent()) {
-//	         User user = userOptional.get();
-//	         Map<String, Object> response = new HashMap<>();
-//	         response.put("firstName", user.getFirstName());
-//	         response.put("lastName", user.getLastName());
-//	         response.put("email", user.getEmail());
-//	         response.put("phoneNumber", user.getPhone());
-//	         response.put("qrToken", user.getQrToken());
-//	         return ResponseEntity.ok(response);
-//	     } else {
-//	         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found for provided QR token.");
-//	     }
-//	 }
+ /*@GetMapping("/user-by-qr")
+ public ResponseEntity<?> getUserByQrToken(@RequestParam("token") String token) {
+	     Optional<User> userOptional = userService.getUserByQrToken(token);
+	     if (userOptional.isPresent()) {
+	         User user = userOptional.get();
+	         Map<String, Object> response = new HashMap<>();
+	         response.put("firstName", user.getFirstName());
+	         response.put("lastName", user.getLastName());
+	         response.put("email", user.getEmail());
+	         response.put("phoneNumber", user.getPhone());
+	         response.put("qrToken", user.getQrToken());
+	         return ResponseEntity.ok(response);
+     } else {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found for provided QR token.");
+    }
+ }*/
 
 	}
 
