@@ -9,9 +9,10 @@ import java.util.List;
 
 public interface ShopDashboardRepository extends JpaRepository<UserPurchase_History, Long> {
     // 1. Total number of users per shop
-    @Query(value = "SELECT COUNT(*) FROM users WHERE shop_id = :shopId", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM users WHERE referred_by_shop_id = :shopId", nativeQuery = true)
     Long getUserCountByShopId(Long shopId);
 
+    
     // 2. Top 5 most visited users by transaction count
     @Query(value = "SELECT u.user_id, u.first_name, u.last_name, u.email, u.phone_number, COUNT(*) AS visit_count " +
             "FROM user_purchase_history ph " +
@@ -54,7 +55,7 @@ public interface ShopDashboardRepository extends JpaRepository<UserPurchase_Hist
     //find number of register user and active user
     @Query(value = "SELECT EXTRACT(MONTH FROM created_date) AS month, COUNT(user_id) " +
             "FROM users " +
-            "WHERE shop_id = :shopId " +
+            "WHERE referred_by_shop_id = :shopId " +
             "GROUP BY month " +
             "ORDER BY month", nativeQuery = true)
     List<Object[]> getMonthlyRegisteredUsers(@Param("shopId") Long shopId);
