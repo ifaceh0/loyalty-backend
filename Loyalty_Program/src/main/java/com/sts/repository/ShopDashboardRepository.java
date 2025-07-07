@@ -12,6 +12,7 @@ public interface ShopDashboardRepository extends JpaRepository<UserPurchase_Hist
     @Query(value = "SELECT COUNT(*) FROM users WHERE referred_by_shop_id = :shopId", nativeQuery = true)
     Long getUserCountByShopId(Long shopId);
 
+    
     // 2. Top 5 most visited users by transaction count
     @Query(value = "SELECT u.user_id, u.first_name, u.last_name, u.email, u.phone_number, COUNT(*) AS visit_count " +
             "FROM user_purchase_history ph " +
