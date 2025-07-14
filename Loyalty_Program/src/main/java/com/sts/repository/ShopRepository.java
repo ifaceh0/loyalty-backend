@@ -2,6 +2,7 @@ package com.sts.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.sts.entity.Shop;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
@@ -11,4 +12,5 @@ public interface ShopRepository extends JpaRepository<Shop, Long> {
     Optional<Shop> findByEmail(String email);
     boolean existsByCompanyEmail(String companyEmail);
     boolean existsByCompanyPhone(String companyPhone);
+    Optional<Shop> findShopByShopId(Long shopId);
 }

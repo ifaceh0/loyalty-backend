@@ -5,15 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.sts.dto.ShopkeeperProfileDTO;
 import com.sts.dto.ShopkeeperSettingDTO;
 import com.sts.repository.UserProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.sts.entity.Shop;
 import com.sts.entity.User;
@@ -21,10 +19,6 @@ import com.sts.entity.UserProfile;
 import com.sts.repository.UserRepository;
 import com.sts.service.ShopService;
 import com.sts.service.UserService;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 
 
 @RestController
@@ -54,35 +48,34 @@ public class ShopController {
 		List<Shop> shopList = shopService.getAllShop();
 		return new ResponseEntity<List<Shop>>(shopList, HttpStatus.OK);
 	}
-	
-	@GetMapping("/fetchShopById/{shopId}")
-	public ResponseEntity<Shop> getShopById(@PathVariable Long shopId){
-		return shopService.getShopById(shopId)
-				.map(shop -> ResponseEntity.ok(shop))
-				.orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-						.body(null));	
+
+	@PostMapping("/update-setting")
+	public ResponseEntity<Map<String, Object>> save(@RequestBody ShopkeeperSettingDTO request) {
+		shopService.saveSetting(request);
+		Map<String, Object> response = new HashMap<>();
+		response.put("success", true);
+		response.put("message", "Shopkeeper settings saved successfully");
+
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/get-setting/{shopId}")
 	public ResponseEntity<ShopkeeperSettingDTO> getSetting(@PathVariable Long shopId) {
-		ShopkeeperSettingDTO dto = shopService.getSetting(shopId);
-		if (dto != null) {
-			return ResponseEntity.ok(dto);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
-	}
-
-	@PostMapping("/update-setting")
-	public ResponseEntity<Void> saveSetting(@RequestBody ShopkeeperSettingDTO dto) {
-		shopService.saveSetting(dto);
-		return ResponseEntity.ok().build();
+		ShopkeeperSettingDTO setting = shopService.getSetting(shopId);
+		return ResponseEntity.ok(setting);
 	}
 
 
+	@GetMapping("/get-profile")
+	public ShopkeeperProfileDTO getProfile(@RequestParam Long shopId){
+		return shopService.getProfile(shopId);
+	}
 
-
-
+	@PutMapping("/update-profile")
+	public ResponseEntity<ShopkeeperProfileDTO> updatePersonal(@RequestBody ShopkeeperProfileDTO dto) {
+		ShopkeeperProfileDTO updatedDto = shopService.updatePersonalProfile(dto);
+		return ResponseEntity.ok(updatedDto);
+	}
 
 	/*@GetMapping("/email")
 	public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
@@ -121,29 +114,29 @@ public class ShopController {
 
 
 	//@Transactional(readOnly = true)
-@GetMapping("/userinfo-by-phone")
-public ResponseEntity<Map<String, Object>> getUserByPhone(@RequestParam String phone) {
-	return userRepository.findByPhone(phone)
-			.map(user -> {
-				Long userId = user.getUserId();
-				Shop shop = user.getShop();
-				Long shopId = (shop != null) ? shop.getShopId() : null;
-				Optional<UserProfile> optionalProfile = Optional.ofNullable(userProfileRepository.findByUserIdAndShopId(userId, shopId));
-				Integer availablePoints = optionalProfile.map(UserProfile::getAvailablePoints).orElse(0);
-				Map<String, Object> userInfo = new HashMap<>();
-				userInfo.put("userId", userId);
-				userInfo.put("shopId", shopId);
-				userInfo.put("firstName", user.getFirstName());
-				userInfo.put("lastName", user.getLastName());
-				userInfo.put("email", user.getEmail());
-				userInfo.put("phoneNumber", user.getPhone());
-				userInfo.put("availablePoints", availablePoints); // ✅ Updated value
+	@GetMapping("/userinfo-by-phone")
+	public ResponseEntity<Map<String, Object>> getUserByPhone(@RequestParam String phone) {
+		return userRepository.findByPhone(phone)
+				.map(user -> {
+					Long userId = user.getUserId();
+					Shop shop = user.getShop();
+					Long shopId = (shop != null) ? shop.getShopId() : null;
+					Optional<UserProfile> optionalProfile = Optional.ofNullable(userProfileRepository.findByUserIdAndShopId(userId, shopId));
+					Integer availablePoints = optionalProfile.map(UserProfile::getAvailablePoints).orElse(0);
+					Map<String, Object> userInfo = new HashMap<>();
+					userInfo.put("userId", userId);
+					userInfo.put("shopId", shopId);
+					userInfo.put("firstName", user.getFirstName());
+					userInfo.put("lastName", user.getLastName());
+					userInfo.put("email", user.getEmail());
+					userInfo.put("phoneNumber", user.getPhone());
+					userInfo.put("availablePoints", availablePoints); // ✅ Updated value
 
-				return ResponseEntity.ok(userInfo);
-			})
-			.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(Map.of("error", "User not found")));
-}
+					return ResponseEntity.ok(userInfo);
+				})
+				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
+						.body(Map.of("error", "User not found")));
+	}
 
 
 
@@ -182,7 +175,7 @@ public ResponseEntity<Map<String, Object>> getUserByPhone(@RequestParam String p
 	        Map<String, Object> result = (Map<String, Object>) userService.createUser(user);
 	        return ResponseEntity.ok(result);
 	    }*/
-	}
+}
 
 
 

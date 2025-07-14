@@ -57,7 +57,6 @@ public class AuthService {
 		user.setLastName(request.getLastName());
 		user.setEmail(request.getEmail());
 		user.setPhone(request.getPhone());
-		userRepository.save(user);
 
 		// Link referral if present
 		if (request.getReferralShopId() != null) {
@@ -65,6 +64,8 @@ public class AuthService {
 					.orElseThrow(() -> new RuntimeException("Referred shop not found"));
 			user.setReferredBy(shop);
 		}
+
+		userRepository.save(user);
 
 		// Create Login entity
 		Login login = new Login();
@@ -101,7 +102,7 @@ public class AuthService {
 		shop.setCompanyAddress(request.getCompanyAddress());
 		shop.setCompanyEmail(request.getCompanyEmail());
 		shop.setCompanyPhone(request.getCompanyPhone());
-		shopRepository.save(shop);
+		Shop s = shopRepository.save(shop);
 
 		// Create Login entity
 		Login login = new Login();
@@ -109,6 +110,7 @@ public class AuthService {
 		login.setPhone(request.getPhone());
 		login.setPassword(passwordEncoder.encode(request.getPassword()));
 		login.setRole(Role.SHOPKEEPER);
+		login.setRefId(s.getShopId());
 		loginRepository.save(login);
 
 		// Send welcome email

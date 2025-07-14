@@ -25,9 +25,12 @@ public class Login {
 	private String email;
 	private String password;
 	
-	 @Enumerated(EnumType.STRING)
-	 @Column(nullable = false)
-	 private Role role;
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private Role role;
+
+	@Column(name = "ref_id")
+	private Long refId;
 	 
 	@Column(name = "reset_token")
 	private String resetToken;

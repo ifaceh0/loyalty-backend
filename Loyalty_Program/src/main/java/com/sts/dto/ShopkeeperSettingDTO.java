@@ -3,17 +3,15 @@ package com.sts.dto;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class ShopkeeperSettingDTO {
     private Long shopId;
-    private double dollarToPointMapping;
     private double sign_upBonuspoints;
-    private double milestoneBonusAmount;
-    private String specialBonusName;
-    private double specialBonusPoints;
-    private LocalDate specialBonusStartDate;
-    private LocalDate specialBonusEndDate;
+    private List<PurchaseRewardDTO> purchaseRewards;
+    private List<MilestoneRewardDTO> milestoneRewards;
+    private List<SpecialBonusDTO> specialBonuses;
     private String bonusdescription;
     private LocalDate beginDate;
     private LocalDate endDate;
