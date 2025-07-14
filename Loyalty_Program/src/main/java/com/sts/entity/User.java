@@ -40,5 +40,18 @@ public class User {
 
     @Column(unique = true)
     private String qrToken;
+
+    public Shop getShop() {
+        return shop;
+    }
+
+    public void setShop(Shop shop) {
+        this.shop = shop;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "shopId", referencedColumnName = "shopId")
+    private Shop shop;
+
 }
 
