@@ -145,6 +145,7 @@ public ResponseEntity<Map<String, Object>> getUserByPhone(@RequestParam String p
 					.body(Map.of("error", "User not found")));
 }
 
+
 	@GetMapping("/email")
 	public ResponseEntity<Map<String, Object>> getUserByEmail(@RequestParam String email) {
 		return userRepository.findByPhone(email)
