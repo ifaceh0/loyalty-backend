@@ -1,100 +1,12 @@
-/*package com.sts.service;
-
-import com.google.zxing.WriterException;
-import com.sts.dto.UserSignupRequest;
-import com.sts.entity.Login;
-import com.sts.entity.User;
-import com.sts.enums.Role;
-import com.sts.repository.LoginRepository;
-import com.sts.repository.UserRepository;
-
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
-@Slf4j
-@Service
-public class UserService {
-
-    @Autowired
-    private UserRepository userRepository;
-    
-    @Autowired
-    private QrCodeGenerator qrCodeGenerator;
-
-    @Autowired
-    private LoginRepository loginRepository;
-
-
-   /* public User createUser(User user) {
-        return userRepository.save(user);
-    }*/
-   /* public User createUser(User user) {
-        // Generate QR token (e.g., UUID (Universally unique identifier)
-        user.setQrToken(java.util.UUID.randomUUID().toString());
-        return userRepository.save(user);
-    }
-    */
-   /* public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
-    }
-
-    public User updateUser(Long id, User userDetails) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
-
-        
-        user.setFirstName(userDetails.getFirstName());
-        user.setLastName(userDetails.getLastName());
-        user.setEmail(userDetails.getEmail());
-        user.setPhone(userDetails.getPhone());
-       
-        return userRepository.save(user);
-    }
-    
-    //For qr codes
-    public Optional<User> getUserByQrToken(String qrToken) {
-        return userRepository.findByQrToken(qrToken);
-    }
-    public Map<String, Object> createUserWithQrCode(User user) {
-        user.setQrToken(UUID.randomUUID().toString());
-        User savedUser = userRepository.save(user);
-
-        String qrCodeBase64;
-        try {
-            qrCodeBase64 = "data:image/png;base64," + qrCodeGenerator.generateQrCodeBase64(savedUser.getQrToken());
-        } catch (WriterException | IOException e) {
-            throw new RuntimeException("QR Code generation failed");
-        }
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("firstName", savedUser.getFirstName());
-        response.put("lastName", savedUser.getLastName());
-        response.put("email", savedUser.getEmail());
-        response.put("phoneNumber", savedUser.getPhone());
-        response.put("qrToken", savedUser.getQrToken());
-        response.put("qrCodeBase64", qrCodeBase64);  
-
-        return response;
-    }
-}*/
-
 package com.sts.service;
 
 import com.google.zxing.WriterException;
+import com.sts.dto.UserDto;
+import com.sts.dto.UserProfileDto;
 import com.sts.entity.User;
+import com.sts.entity.UserProfile;
 import com.sts.repository.LoginRepository;
+import com.sts.repository.UserProfileRepository;
 import com.sts.repository.UserRepository;
 //import com.sts.util.QrCodeGenerator;
 import lombok.extern.slf4j.Slf4j;
@@ -113,6 +25,9 @@ public class UserService {
 
     @Autowired
     private LoginRepository loginRepository;
+
+    @Autowired
+    private UserProfileRepository profileRepo;
 
     @Autowired
     private QrCodeGenerator qrCodeGenerator;
@@ -188,6 +103,55 @@ public class UserService {
      */
     public Optional<User> getUserByQrToken(String qrToken) {
         return userRepository.findByQrToken(qrToken);
+    }
+
+    //user info through phonenumber and email
+    public UserDto findByPhoneInShop(String phone, Long shopId) {
+        return userRepository.findByPhone(phone)
+                .map(user -> toDtoWithProfile(user, shopId))
+                .orElse(null);
+    }
+
+    public UserDto findByEmailInShop(String email, Long shopId) {
+        return userRepository.findByEmail(email)
+                .map(user -> toDtoWithProfile(user, shopId))
+                .orElse(null);
+    }
+
+    private UserDto toDtoWithProfile(User user, Long shopId) {
+        UserDto dto = new UserDto();
+        dto.setUserId(user.getUserId());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setPhone(user.getPhone());
+        dto.setEmail(user.getEmail());
+        dto.setCreatedDate(user.getCreatedDate());
+        dto.setLastUpdatedDate(user.getLastUpdatedDate());
+
+        UserProfileDto pDto = profileRepo
+                .findByUser_UserIdAndShop_ShopId(user.getUserId(), shopId)
+                .map(this::mapProfile)
+                .orElseGet(() -> emptyProfile(user.getUserId(), shopId));
+        dto.setProfile(pDto);
+        return dto;
+    }
+
+    private UserProfileDto mapProfile(UserProfile p) {
+        UserProfileDto d = new UserProfileDto();
+        d.setUserId(p.getUserId());
+        d.setShopId(p.getShop().getShopId());
+        d.setAvailablePoints(p.getAvailablePoints());
+        d.setCreatedAt(p.getCreatedAt());
+        d.setUpdatedAt(p.getUpdatedAt());
+        return d;
+    }
+
+    private UserProfileDto emptyProfile(Long userId, Long shopId) {
+        UserProfileDto d = new UserProfileDto();
+        d.setUserId(userId);
+        d.setShopId(shopId);
+        d.setAvailablePoints(0);
+        return d;
     }
 }
 
