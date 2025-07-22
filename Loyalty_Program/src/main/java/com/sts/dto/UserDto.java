@@ -2,21 +2,17 @@ package com.sts.dto;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class UserDto {
-//	private String phoneNumber;
-//	private Long User_Id;
-//	private String Name;
-//	private Integer Totalpoints;
-//	private String qrToken;
-//    private String qrCodeBase64;
-//    private String Email;
-
-	private String phone;
 	private Long userId;
 	private String firstName;
-	private Integer availablePoints;
-	private String qrToken;
-	private String qrCodeBase64;
+	private String lastName;
+	private String phone;
 	private String email;
+	private LocalDateTime createdDate;
+	private LocalDateTime lastUpdatedDate;
+
+	private UserProfileDto profile;
 }
