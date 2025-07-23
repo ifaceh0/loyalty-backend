@@ -108,17 +108,21 @@ public class UserService {
     //user info through phonenumber and email
     public UserDto findByPhoneInShop(String phone, Long shopId) {
         return userRepository.findByPhone(phone)
-                .map(user -> toDtoWithProfile(user, shopId))
-                .orElse(null);
+                .flatMap(user -> profileRepo.findByUser_UserIdAndShop_ShopId(user.getUserId(), shopId)
+                        .filter(p -> p.getAvailablePoints() != null && p.getAvailablePoints() > 0)
+                        .map(profile -> toDto(user, profile)))
+                .orElse(null); // or throw new UserNotFoundException();
     }
 
     public UserDto findByEmailInShop(String email, Long shopId) {
         return userRepository.findByEmail(email)
-                .map(user -> toDtoWithProfile(user, shopId))
-                .orElse(null);
+                .flatMap(user -> profileRepo.findByUser_UserIdAndShop_ShopId(user.getUserId(), shopId)
+                        .filter(p -> p.getAvailablePoints() != null && p.getAvailablePoints() > 0)
+                        .map(profile -> toDto(user, profile)))
+                .orElse(null); // or throw new UserNotFoundException();
     }
 
-    private UserDto toDtoWithProfile(User user, Long shopId) {
+    private UserDto toDto(User user, UserProfile profile) {
         UserDto dto = new UserDto();
         dto.setUserId(user.getUserId());
         dto.setFirstName(user.getFirstName());
@@ -128,10 +132,13 @@ public class UserService {
         dto.setCreatedDate(user.getCreatedDate());
         dto.setLastUpdatedDate(user.getLastUpdatedDate());
 
-        UserProfileDto pDto = profileRepo
-                .findByUser_UserIdAndShop_ShopId(user.getUserId(), shopId)
-                .map(this::mapProfile)
-                .orElseGet(() -> emptyProfile(user.getUserId(), shopId));
+        UserProfileDto pDto = new UserProfileDto();
+        pDto.setUserId(profile.getUserId());
+        pDto.setShopId(profile.getShop().getShopId());
+        pDto.setAvailablePoints(profile.getAvailablePoints());
+        pDto.setCreatedAt(profile.getCreatedAt());
+        pDto.setUpdatedAt(profile.getUpdatedAt());
+
         dto.setProfile(pDto);
         return dto;
     }
