@@ -65,7 +65,7 @@ public class AuthService {
 			user.setReferredBy(shop);
 		}
 
-		userRepository.save(user);
+		User u = userRepository.save(user);
 
 		// Create Login entity
 		Login login = new Login();
@@ -73,6 +73,7 @@ public class AuthService {
 		login.setPhone(request.getPhone());
 		login.setPassword(passwordEncoder.encode(request.getPassword()));
 		login.setRole(Role.USER);
+		login.setRefId(u.getUserId());
 		loginRepository.save(login);
 
 		//Send welcome email

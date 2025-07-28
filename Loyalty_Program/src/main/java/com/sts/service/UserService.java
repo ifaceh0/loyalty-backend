@@ -3,8 +3,10 @@ package com.sts.service;
 import com.google.zxing.WriterException;
 import com.sts.dto.UserDto;
 import com.sts.dto.UserProfileDto;
+import com.sts.entity.Login;
 import com.sts.entity.User;
 import com.sts.entity.UserProfile;
+import com.sts.enums.Role;
 import com.sts.repository.LoginRepository;
 import com.sts.repository.UserProfileRepository;
 import com.sts.repository.UserRepository;
@@ -159,6 +161,38 @@ public class UserService {
         d.setShopId(shopId);
         d.setAvailablePoints(0);
         return d;
+    }
+    //User profile update
+    public UserDto updateUserProfile(UserDto dto) {
+        User user = userRepository.findById(dto.getUserId()).orElseThrow(() ->
+                new NoSuchElementException("User not found with ID: " + dto.getUserId()));
+
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setPhone(dto.getPhone());
+        user.setEmail(dto.getEmail());
+        userRepository.save(user);
+
+        // Update login if role is USER
+        Login login = loginRepository.findByRefIdAndRole(dto.getUserId(), Role.USER).orElse(null);
+        if (login != null) {
+            login.setEmail(dto.getEmail());
+            login.setPhone(dto.getPhone());
+            loginRepository.save(login);
+        } else {
+            throw new RuntimeException("Login not found for this user");
+        }
+
+        return convertUserToDto(user);
+    }
+    private UserDto convertUserToDto(User user) {
+        UserDto dto = new UserDto();
+        dto.setUserId(user.getUserId());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setPhone(user.getPhone());
+        dto.setEmail(user.getEmail());
+        return dto;
     }
 }
 
