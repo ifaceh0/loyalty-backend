@@ -84,7 +84,7 @@ public class UserController {
     
     //READ ONE BY ID
     @GetMapping("/fetchUserById/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    public ResponseEntity<User> getUserById(@PathVariable("userId") Long id) {
         Optional<User> user = userService.getUserById(id);
         return user.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
