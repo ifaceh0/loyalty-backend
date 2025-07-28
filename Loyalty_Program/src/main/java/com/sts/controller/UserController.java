@@ -108,5 +108,10 @@ public class UserController {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }*/
- 
+    //update user profile
+   @PutMapping("/update-user-profile")
+   public ResponseEntity<UserDto> updateUserProfile(@RequestBody UserDto dto) {
+       UserDto updatedDto = userService.updateUserProfile(dto);
+       return ResponseEntity.ok(updatedDto);
+   }
 }
