@@ -4,10 +4,7 @@ import com.sts.QrcodeGenerator.QrCodeGenerator;
 import com.sts.dto.AddPointsRequest;
 import com.sts.dto.PurchaseRequestDTO;
 import com.sts.entity.*;
-import com.sts.repository.ShopRepository;
-import com.sts.repository.UserProfileRepository;
-import com.sts.repository.UserPurchaseHistory_Repository;
-import com.sts.repository.UserRepository;
+import com.sts.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +34,8 @@ public class QRCodeController {
     @Autowired
     private UserPurchaseHistory_Repository historyRepository;
 
+	@Autowired
+	private Shopkeeper_SettingRepository shopkeeperSettingRepository;
 	@GetMapping("/allShops")
 	public ResponseEntity<?> getAllShopsForUser(@RequestParam Long userId) {
 		Optional<User> userOpt = userRepository.findById(userId);
@@ -157,10 +156,16 @@ public class QRCodeController {
             // 1. Update UserProfile
             UserProfile profile = userProfileRepository.findByUserIdAndShopId(userId, shopId);
             if (profile == null) {
-                profile = new UserProfile();
+				// Step 3: Get bonus from ShopkeeperSetting
+				Shopkeeper_Setting setting = shopkeeperSettingRepository.findByShop_ShopId(shopId)
+						.orElseThrow(() -> new RuntimeException("No setting found for shop " + shopId));
+				int bonus = (int) setting.getSign_upBonuspoints();
+
+				// Step 4: Add bonus to givenPoints
+				profile = new UserProfile();
                 profile.setUserId(userId);
                 profile.setShopId(shopId);
-                profile.setAvailablePoints(0);
+                profile.setAvailablePoints(bonus);
                 profile.setCreatedAt(LocalDateTime.now());
             }
 
