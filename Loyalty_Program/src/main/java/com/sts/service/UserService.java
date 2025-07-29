@@ -1,6 +1,7 @@
 package com.sts.service;
 
 import com.google.zxing.WriterException;
+import com.sts.dto.UserDetailsDTO;
 import com.sts.dto.UserDto;
 import com.sts.dto.UserProfileDto;
 import com.sts.entity.Login;
@@ -163,7 +164,7 @@ public class UserService {
         return d;
     }
     //User profile update
-    public UserDto updateUserProfile(UserDto dto) {
+    public UserDetailsDTO updateUserProfile(UserDetailsDTO dto) {
         User user = userRepository.findById(dto.getUserId()).orElseThrow(() ->
                 new NoSuchElementException("User not found with ID: " + dto.getUserId()));
 
@@ -185,13 +186,27 @@ public class UserService {
 
         return convertUserToDto(user);
     }
-    private UserDto convertUserToDto(User user) {
-        UserDto dto = new UserDto();
+    private UserDetailsDTO convertUserToDto(User user) {
+        UserDetailsDTO dto = new UserDetailsDTO();
         dto.setUserId(user.getUserId());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setPhone(user.getPhone());
         dto.setEmail(user.getEmail());
+        return dto;
+    }
+
+    public UserDetailsDTO getUserDetails(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        UserDetailsDTO dto = new UserDetailsDTO();
+        dto.setUserId(user.getUserId());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setPhone(user.getPhone());
+        dto.setEmail(user.getEmail());
+
         return dto;
     }
 }
