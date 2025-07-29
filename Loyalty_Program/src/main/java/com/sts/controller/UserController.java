@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.sts.dto.UserDetailsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +30,14 @@ import com.sts.service.UserService;
 public class UserController {
 	@Autowired
 	private UserService userService;
-	
-	
+
+
 	/*@PostMapping("saveUser")
 	public ResponseEntity<User> createUser(@RequestBody User user) {
 		User userDetails = userService.createUserWithQrCode(user);
 		return new ResponseEntity<User>(userDetails, HttpStatus.CREATED);
 	}*/
-	
+
 	// Create user and return user details + QR code
     @PostMapping("/createuser")
     public ResponseEntity<?> createUser(@RequestBody User user) {
@@ -47,8 +48,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating user: " + e.getMessage());
         }
     }
-    
-    
+
+
  //  GET: Get user by QR token
    /* @GetMapping("/user-by-qr")
     public ResponseEntity<?> getUserByQrToken(@RequestParam("token") String token) {
@@ -72,9 +73,9 @@ public class UserController {
 //		return userService.getUserById(userId)
 //				.map(user -> ResponseEntity.ok(user))
 //				.orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-//						.body(null));	
+//						.body(null));
 //	}
-	
+
 	// READ ALL
     @GetMapping("/fetchAllUser")
     public ResponseEntity<List<User>> getAllUsers() {
@@ -109,9 +110,13 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }*/
     //update user profile
-   @PutMapping("/update-user-profile")
-   public ResponseEntity<UserDto> updateUserProfile(@RequestBody UserDto dto) {
-       UserDto updatedDto = userService.updateUserProfile(dto);
-       return ResponseEntity.ok(updatedDto);
+   @PutMapping("/update-profile")
+   public UserDetailsDTO updateUserProfile(@RequestBody UserDetailsDTO dto) {
+       return userService.updateUserProfile(dto);
    }
+
+    @GetMapping("/get-profile")
+    public UserDetailsDTO getUserDetails(@RequestParam Long userId) {
+        return userService.getUserDetails(userId);
+    }
 }
