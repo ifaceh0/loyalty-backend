@@ -29,12 +29,12 @@ public class UserPurchaseHistory_Controller
 	@Autowired
 	private UserPurchaseHistory_Service userPurchaseHistoryService;
 	
-	    @PostMapping("/purchase-history")
-	    public ResponseEntity<UserPurchase_History> createPurchaseHistory(@RequestBody UserPurchase_History userPurchaseHistory) {
-	        UserPurchase_History savedPurchaseHistory = userPurchaseHistoryService.createUserPurchaseHistory(userPurchaseHistory);
-	        return new ResponseEntity<>(savedPurchaseHistory, HttpStatus.CREATED);
-	    }
-	    
+//	    @PostMapping("/purchase-history")
+//	    public ResponseEntity<UserPurchase_History> createPurchaseHistory(@RequestBody UserPurchase_History userPurchaseHistory) {
+//	        UserPurchase_History savedPurchaseHistory = userPurchaseHistoryService.createUserPurchaseHistory(userPurchaseHistory);
+//	        return new ResponseEntity<>(savedPurchaseHistory, HttpStatus.CREATED);
+//	    }
+//
 	@GetMapping("/fetchAllUserPurchaseHistory")
 	public ResponseEntity<List<UserPurchase_History>> getAllUserPurchaseHistoryList(){
 		List<UserPurchase_History> userPurchaseHistoryList = userPurchaseHistoryService.getAllUserPurchaseHistory();

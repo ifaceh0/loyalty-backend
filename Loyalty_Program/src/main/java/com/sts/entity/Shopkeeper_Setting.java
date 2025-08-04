@@ -21,4 +21,6 @@ public class Shopkeeper_Setting {
 	private LocalDate beginDate;
 	private LocalDate endDate;
 	private double amountOff;
+	// $ to Points mapping field
+	private Double dollarToPointsMapping;  // e.g., 1.0 means $1 = 1 point
 }

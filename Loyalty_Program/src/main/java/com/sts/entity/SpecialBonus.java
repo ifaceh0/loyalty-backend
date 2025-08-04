@@ -20,4 +20,6 @@ public class SpecialBonus {
     @ManyToOne
     @JoinColumn(name = "shop_id")
     private Shop shop;
+    // $ to Points mapping field for apply for special occasion
+    private Double dollartoPointsMapping;  // e.g., 1.0 means $1 = 1 point
 }
