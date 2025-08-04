@@ -60,6 +60,7 @@ public class ShopService {
 		setting.setBeginDate(request.getBeginDate());
 		setting.setEndDate(request.getEndDate());
 		setting.setAmountOff(request.getAmountOff());
+		setting.setDollarToPointsMapping(request.getDollarToPointsMapping());
 		settingRepository.save(setting);
 
 		// Remove previous rewards
@@ -95,6 +96,7 @@ public class ShopService {
 				sb.setPoints(dto.getPoints());
 				sb.setStartDate(dto.getStartDate());
 				sb.setEndDate(dto.getEndDate());
+				sb.setDollartoPointsMapping(dto.getDollartoPointsMapping());
 				sb.setShop(shop);
 				bonusRepo.save(sb);
 			}
@@ -113,6 +115,7 @@ public class ShopService {
 		response.setBeginDate(setting.getBeginDate());
 		response.setEndDate(setting.getEndDate());
 		response.setAmountOff(setting.getAmountOff());
+		response.setDollarToPointsMapping(setting.getDollarToPointsMapping());
 
 		response.setPurchaseRewards(purchaseRepo.findByShop_ShopId(shopId)
 				.stream().map(p -> {
@@ -137,6 +140,7 @@ public class ShopService {
 					dto.setPoints(s.getPoints());
 					dto.setStartDate(s.getStartDate());
 					dto.setEndDate(s.getEndDate());
+					dto.setDollartoPointsMapping(s.getDollartoPointsMapping());
 					return dto;
 				}).toList());
 

@@ -1,13 +1,8 @@
 package com.sts.entity;
 
 import java.time.LocalDateTime;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -28,6 +23,7 @@ public class UserPurchase_History {
     private LocalDateTime purchaseDate;
 
     private Integer transactionAmount;
-
+    @Column(name="pointsEarned")
     private Integer givenPoints;
+
 }

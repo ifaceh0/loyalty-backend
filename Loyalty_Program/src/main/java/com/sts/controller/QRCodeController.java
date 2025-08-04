@@ -140,62 +140,65 @@ public class QRCodeController {
 		}
 	}
 
-    @PostMapping("/add-points")
-    public ResponseEntity<?> addPointsToUserProfile(@RequestBody AddPointsRequest request) {
-        try {
-            Long userId = request.getUserId();
-            Long shopId = request.getShopId();
-            Integer pointsToAdd = request.getPointsToAdd();
-            Integer dollarAmount = request.getDollarAmount(); // <-- Add this field to the request DTO
+	@PostMapping("/add-points")
+	public ResponseEntity<?> addPointsToUserProfile(@RequestBody AddPointsRequest request) {
+		try {
+			Long userId = request.getUserId();
+			Long shopId = request.getShopId();
+			Integer dollarAmount = request.getDollarAmount();
 
-            if (userId == null || shopId == null || pointsToAdd == null || pointsToAdd <= 0
-                    || dollarAmount == null || dollarAmount <= 0) {
-                return ResponseEntity.badRequest().body("Invalid input: All fields required and must be > 0.");
-            }
+			if (userId == null || shopId == null || dollarAmount == null || dollarAmount <= 0) {
+				return ResponseEntity.badRequest().body("Invalid input: userId, shopId, and dollarAmount are required and must be > 0.");
+			}
 
-            // 1. Update UserProfile
-            UserProfile profile = userProfileRepository.findByUserIdAndShopId(userId, shopId);
-            if (profile == null) {
-				// Step 3: Get bonus from ShopkeeperSetting
-				Shopkeeper_Setting setting = shopkeeperSettingRepository.findByShop_ShopId(shopId)
-						.orElseThrow(() -> new RuntimeException("No setting found for shop " + shopId));
-				int bonus = (int) setting.getSign_upBonuspoints();
+			// Fetch shopkeeper settings
+			Shopkeeper_Setting setting = shopkeeperSettingRepository.findByShop_ShopId(shopId)
+					.orElseThrow(() -> new RuntimeException("No setting found for shop " + shopId));
 
-				// Step 4: Add bonus to givenPoints
+			double dollarToPoints = setting.getDollarToPointsMapping() != null ? setting.getDollarToPointsMapping() : 1.0;
+			int calculatedPoints = (int) (dollarAmount * dollarToPoints);
+
+			// Fetch or create UserProfile
+			UserProfile profile = userProfileRepository.findByUserIdAndShopId(userId, shopId);
+
+			if (profile == null) {
+				int signupBonus = (int) setting.getSign_upBonuspoints();
+
 				profile = new UserProfile();
-                profile.setUserId(userId);
-                profile.setShopId(shopId);
-                profile.setAvailablePoints(bonus);
-                profile.setCreatedAt(LocalDateTime.now());
-            }
+				profile.setUserId(userId);
+				profile.setShopId(shopId);
+				profile.setAvailablePoints(signupBonus + calculatedPoints);
+				profile.setCreatedAt(LocalDateTime.now());
+			} else {
+				int currentPoints = profile.getAvailablePoints();
+				profile.setAvailablePoints(currentPoints + calculatedPoints);
+			}
 
-            int currentPoints = profile.getAvailablePoints();
-            profile.setAvailablePoints(currentPoints + pointsToAdd);
-            profile.setUpdatedAt(LocalDateTime.now());
+			profile.setUpdatedAt(LocalDateTime.now());
+			userProfileRepository.save(profile);
 
-            userProfileRepository.save(profile);
+			// Record in UserPurchase_History
+			User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+			Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new RuntimeException("Shop not found"));
 
-            // 2. Add record to UserPurchase_History
-            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-            Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new RuntimeException("Shop not found"));
+			UserPurchase_History history = new UserPurchase_History();
+			history.setUser(user);
+			history.setShop(shop);
+			history.setTransactionAmount(dollarAmount);
+			history.setGivenPoints(calculatedPoints);
+			history.setPurchaseDate(LocalDateTime.now());
 
-            UserPurchase_History history = new UserPurchase_History();
-            history.setUser(user);
-            history.setShop(shop);
-            history.setTransactionAmount(dollarAmount);
-            history.setGivenPoints(pointsToAdd);
-            history.setPurchaseDate(LocalDateTime.now());
+			historyRepository.save(history);
 
-            historyRepository.save(history);
+			return ResponseEntity.ok(Map.of(
+					"message", "Points calculated and added based on dollar amount and mapping.",
+					"earnedPoints", calculatedPoints,
+					"newBalance", profile.getAvailablePoints()
+			));
 
-            return ResponseEntity.ok(Map.of(
-                    "message", "Points and purchase history added successfully",
-                    "newBalance", profile.getAvailablePoints()
-            ));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error adding points: " + e.getMessage());
-        }
-    }
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Error adding points: " + e.getMessage());
+		}
+	}
 }
