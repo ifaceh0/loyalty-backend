@@ -17,6 +17,7 @@ public class JwtUtil {
     private String secretKey;
 
     private static final long EXPIRATION_TIME = 86400000; // 1 day in milliseconds
+    private static final long SERVICE_TOKEN_EXPIRATION_TIME = 3600000; // 1 hour
 
     public String generateToken(String email, Role role) {
         return Jwts.builder()
@@ -27,6 +28,18 @@ public class JwtUtil {
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256)
                 .compact();
     }
+
+//    new code
+    public String generateServiceToken() {
+        return Jwts.builder()
+                .setSubject("service")
+                .claim("role", "ROLE_SERVICE")
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + SERVICE_TOKEN_EXPIRATION_TIME))
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256)
+                .compact();
+    }
+//    end code
 
     public Claims extractClaims(String token) {
         try {
