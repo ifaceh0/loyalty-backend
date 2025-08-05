@@ -11,7 +11,10 @@ public class AuthResponse {
     private SubscriptionDetails subscriptionDetails;
 
     public AuthResponse(String token, String message, Long id, String name) {
-        this(token, message, id, name, null);
+        this.token = token;
+        this.message = message;
+        this.id = id;
+        this.name = name;
     }
 
     public AuthResponse(String token, String message, Long id, String name, SubscriptionDetails subscriptionDetails) {
