@@ -1,9 +1,6 @@
 package com.sts.service;
 
-import com.sts.dto.AuthResponse;
-import com.sts.dto.ShopSignupRequest;
-import com.sts.dto.SigninRequest;
-import com.sts.dto.UserSignupRequest;
+import com.sts.dto.*;
 import com.sts.entity.Shop;
 import com.sts.entity.User;
 import com.sts.enums.Role;
@@ -11,6 +8,10 @@ import com.sts.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +20,11 @@ import com.sts.repository.LoginRepository;
 import com.sts.repository.ShopRepository;
 import com.sts.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -43,6 +47,17 @@ public class AuthService {
 
 	@Autowired
 	private EmailService emailService;
+
+	//new code
+	private final RestTemplate restTemplate;
+
+	@Value("${subscription.service.url:https://subscription-backend-e8gq.onrender.com}")
+	private String subscriptionServiceUrl;
+
+	public AuthService(){
+		this.restTemplate = new RestTemplate();
+	}
+	//new end
 
 	@Transactional
 	public AuthResponse signupUser(UserSignupRequest request) {
@@ -94,6 +109,21 @@ public class AuthService {
 			throw new RuntimeException("Email, phone, or company details already exist");
 		}
 
+		//new start
+		String subscriptionUrl = subscriptionServiceUrl + "/api/subscription/verifyShopSubscriptionEmail";
+		Map<String, String> emailRequest = new HashMap<>();
+		emailRequest.put("email", request.getCompanyEmail());
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set("Authorization", "Bearer " + jwtUtil.generateServiceToken());
+		HttpEntity<Map<String, String>> entity = new HttpEntity<>(emailRequest, headers);
+		ResponseEntity<Map> subscriptionResponse = restTemplate.postForEntity(subscriptionUrl, entity, Map.class);
+
+		if (!subscriptionResponse.getStatusCode().is2xxSuccessful() || !(Boolean) subscriptionResponse.getBody().get("success")) {
+			throw new RuntimeException("Company email verification failed: " + subscriptionResponse.getBody().get("message"));
+		}
+		//new end
+
 		// Create Shop entity
 		Shop shop = new Shop();
 		shop.setShopName(request.getShopName());
@@ -134,6 +164,7 @@ public class AuthService {
 		String token = jwtUtil.generateToken(login.getEmail(), login.getRole());
 		Long id = null;
 		String name = null;
+		SubscriptionDetails subscriptionDetails = null; //new code
 
 		// Step 2: Match by email for USER or SHOP
 		if (login.getRole() == Role.USER) {
@@ -149,6 +180,41 @@ public class AuthService {
 				Shop shop = shopOpt.get();
 				id = shop.getShopId();
 				name = shop.getShopName();
+
+				//new start
+				String subscriptionUrl = subscriptionServiceUrl + "/api/subscription/getSubscriptionDetails";
+				Map<String, String> emailRequest = new HashMap<>();
+				emailRequest.put("email", shop.getCompanyEmail());
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_JSON);
+				headers.set("Authorization", "Bearer " + jwtUtil.generateServiceToken());
+				HttpEntity<Map<String, String>> entity = new HttpEntity<>(emailRequest, headers);
+				ResponseEntity<Map> subscriptionResponse = restTemplate.postForEntity(subscriptionUrl, entity, Map.class);
+
+				if (subscriptionResponse.getStatusCode().is2xxSuccessful() && (Boolean) subscriptionResponse.getBody().get("success")) {
+					Map<String, Object> responseBody = subscriptionResponse.getBody();
+					String status = (String) responseBody.get("status");
+					if (!"ACTIVE".equals(status)) {
+						throw new RuntimeException("Login failed: Subscription is " + status.toLowerCase() + ".");
+					}
+					subscriptionDetails = new SubscriptionDetails(
+							(String) responseBody.get("email"),
+							status,
+							(String) responseBody.get("planName"),
+							(String) responseBody.get("interval"),
+							(String) responseBody.get("nextPlanName"),
+							(String) responseBody.get("nextInterval"),
+							(String) responseBody.get("startDate"),
+							(String) responseBody.get("endDate"),
+							(Boolean) responseBody.get("autoRenew"),
+							(Boolean) responseBody.get("cancelAtPeriodEnd"),
+							(String) responseBody.get("stripeCustomerId"),
+							(String) responseBody.get("stripeSubscriptionId")
+					);
+				} else {
+					throw new RuntimeException("Failed to retrieve subscription details: " + subscriptionResponse.getBody().get("message"));
+				}
+				//new end
 			}
 		}
 
@@ -156,7 +222,7 @@ public class AuthService {
 			throw new RuntimeException("No matching User or Shop found for the provided email.");
 		}
 
-		return new AuthResponse(token, "Signin successful", id, name);
+		return new AuthResponse(token, "Signin successful", id, name, subscriptionDetails);
 	}
 
 	@Value("${app.frontend.reset-url}")
