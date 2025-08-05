@@ -2,6 +2,8 @@ package com.sts.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class SubscriptionDetails {
     private String email;
@@ -10,6 +12,8 @@ public class SubscriptionDetails {
     private String interval;
     private String nextPlanName;
     private String nextInterval;
+    private Double price;
+    private List applications;
     private String startDate;
     private String endDate;
     private Boolean autoRenew;
@@ -18,7 +22,7 @@ public class SubscriptionDetails {
     private String stripeSubscriptionId;
 
     public SubscriptionDetails(
-            String email, String status, String planName, String interval,
+            String email, String status, String planName, String interval, Double price, List applications,
             String nextPlanName, String nextInterval, String startDate, String endDate,
             Boolean autoRenew, Boolean cancelAtPeriodEnd, String stripeCustomerId, String stripeSubscriptionId
     ) {
@@ -26,6 +30,8 @@ public class SubscriptionDetails {
         this.status = status;
         this.planName = planName;
         this.interval = interval;
+        this.price = price;
+        this.applications = applications;
         this.nextPlanName = nextPlanName;
         this.nextInterval = nextInterval;
         this.startDate = startDate;
