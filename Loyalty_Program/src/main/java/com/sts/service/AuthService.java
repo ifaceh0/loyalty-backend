@@ -109,20 +109,20 @@ public class AuthService {
 			throw new RuntimeException("Email, phone, or company details already exist");
 		}
 
-		//new start
-		String subscriptionUrl = subscriptionServiceUrl + "/api/subscription/verifyShopSubscriptionEmail";
-		Map<String, String> emailRequest = new HashMap<>();
-		emailRequest.put("email", request.getCompanyEmail());
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.set("Authorization", "Bearer " + jwtUtil.generateServiceToken());
-		HttpEntity<Map<String, String>> entity = new HttpEntity<>(emailRequest, headers);
-		ResponseEntity<Map> subscriptionResponse = restTemplate.postForEntity(subscriptionUrl, entity, Map.class);
-
-		if (!subscriptionResponse.getStatusCode().is2xxSuccessful() || !(Boolean) subscriptionResponse.getBody().get("success")) {
-			throw new RuntimeException("Company email verification failed: " + subscriptionResponse.getBody().get("message"));
-		}
-		//new end
+//		//new start
+//		String subscriptionUrl = subscriptionServiceUrl + "/api/subscription/verifyShopSubscriptionEmail";
+//		Map<String, String> emailRequest = new HashMap<>();
+//		emailRequest.put("email", request.getCompanyEmail());
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.setContentType(MediaType.APPLICATION_JSON);
+//		headers.set("Authorization", "Bearer " + jwtUtil.generateServiceToken());
+//		HttpEntity<Map<String, String>> entity = new HttpEntity<>(emailRequest, headers);
+//		ResponseEntity<Map> subscriptionResponse = restTemplate.postForEntity(subscriptionUrl, entity, Map.class);
+//
+//		if (!subscriptionResponse.getStatusCode().is2xxSuccessful() || !(Boolean) subscriptionResponse.getBody().get("success")) {
+//			throw new RuntimeException("Company email verification failed: " + subscriptionResponse.getBody().get("message"));
+//		}
+//		//new end
 
 		// Create Shop entity
 		Shop shop = new Shop();
