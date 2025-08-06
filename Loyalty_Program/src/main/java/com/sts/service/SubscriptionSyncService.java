@@ -46,8 +46,8 @@ public class SubscriptionSyncService {
     private String subscriptionServiceUrl;
 
     // Run every hour to sync subscription data
-//    @Scheduled(fixedRate = 3600000) // 1 hour in milliseconds
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 3600000) // 1 hour in milliseconds
+//    @Scheduled(fixedRate = 10000)
     public void syncSubscriptions() {
         List<Shop> shops = shopRepository.findAll(); // Fetch all shops
         log.info("Found {} shops to sync", shops.size());
