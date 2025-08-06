@@ -1,5 +1,6 @@
 package com.sts.entity;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import jakarta.persistence.*;
@@ -33,5 +34,8 @@ public class Shop {
     @OneToMany(mappedBy = "referredBy", cascade = CascadeType.ALL)
     private Set<User> users;
 
-    private String stripeCustomerId;
+//    private String stripeCustomerId;
+    private String subscriptionStatus; // e.g., "ACTIVE", "INACTIVE", "CANCELLED"
+
+    private LocalDateTime subscriptionEndDate; // To check if subscription is still valid
 }
