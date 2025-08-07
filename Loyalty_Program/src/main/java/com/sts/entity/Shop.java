@@ -34,7 +34,12 @@ public class Shop {
     @OneToMany(mappedBy = "referredBy", cascade = CascadeType.ALL)
     private Set<User> users;
 
-//    private String stripeCustomerId;
+    @Column(name = "city", nullable = true)
+    private String city;
+
+    @Column(name = "country", nullable = true)
+    private String country;
+
     private String subscriptionStatus; // e.g., "ACTIVE", "INACTIVE", "CANCELLED"
 
     private LocalDateTime subscriptionEndDate; // To check if subscription is still valid

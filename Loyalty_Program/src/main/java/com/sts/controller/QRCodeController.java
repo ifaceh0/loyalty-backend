@@ -36,8 +36,9 @@ public class QRCodeController {
 
 	@Autowired
 	private Shopkeeper_SettingRepository shopkeeperSettingRepository;
-	@GetMapping("/allShops")
-	public ResponseEntity<?> getAllShopsForUser(@RequestParam Long userId) {
+
+	@GetMapping("/allShopsAvailable")
+	public ResponseEntity<?> getAllShopsAvailable(@RequestParam Long userId) {
 		Optional<User> userOpt = userRepository.findById(userId);
 		if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
 
@@ -46,9 +47,43 @@ public class QRCodeController {
 			map.put("shopId", shop.getShopId());
 			map.put("shopName", shop.getShopName());
 			map.put("shopPhone", shop.getPhone());
+			map.put("country", shop.getCountry());
+			map.put("city", shop.getCity());
 			map.put("customerId", userId);
 			return map;
 		}).collect(Collectors.toList());
+
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping("/userSpecificShop")
+	public ResponseEntity<?> getAllShopsForSpecificUser(@RequestParam Long userId) {
+		// Verify user exists
+		Optional<User> userOpt = userRepository.findById(userId);
+		if (userOpt.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+
+		// Fetch UserProfile records for the user
+		List<UserProfile> userProfiles = userProfileRepository.findByUserId(userId);
+		if (userProfiles.isEmpty()) {
+			return ResponseEntity.ok().body(List.of()); // Return empty list if no shops visited
+		}
+
+		// Map UserProfile to response format
+		List<Map<String, Object>> response = userProfiles.stream()
+				.map(userProfile -> {
+					Shop shop = userProfile.getShop();
+					Map<String, Object> map = new HashMap<>();
+					map.put("shopId", shop.getShopId());
+					map.put("shopName", shop.getShopName());
+					map.put("shopPhone", shop.getPhone());
+					map.put("country", shop.getCountry());
+					map.put("city", shop.getCity());
+					map.put("customerId", userId);
+					return map;
+				})
+				.collect(Collectors.toList());
 
 		return ResponseEntity.ok(response);
 	}

@@ -66,7 +66,6 @@ public class ShopController {
 		return ResponseEntity.ok(setting);
 	}
 
-
 	@GetMapping("/get-profile")
 	public ShopkeeperProfileDTO getProfile(@RequestParam Long shopId){
 		return shopService.getProfile(shopId);
@@ -78,92 +77,6 @@ public class ShopController {
 		return ResponseEntity.ok(updatedDto);
 	}
 
-	/*@GetMapping("/email")
-	public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
-		try {
-			return userRepository.findByEmail(email)
-					.map(user -> {
-						// ensure profiles list isn't null
-						List<UserProfile> profiles = Optional.ofNullable(user.getUserProfiles())
-								.orElse(List.of());
-						UserProfile profile = profiles.isEmpty() ? null : profiles.get(0);
-
-
-						Map<String, Object> userInfo = new HashMap<>();
-						userInfo.put("userId", user.getUserId());
-						userInfo.put("firstName", user.getFirstName());
-						userInfo.put("lastName", user.getLastName());
-						userInfo.put("email", user.getEmail());
-						userInfo.put("phoneNumber", user.getPhone());
-						userInfo.put("availablePoints", profile != null ? profile.getAvailablePoints() : 0);
-
-						return ResponseEntity.ok(userInfo);
-					})
-					.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-							.body(Map.of("error", "User not found")));
-
-		} catch (Exception ex) {
-			ex.printStackTrace();  // important for troubleshooting
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(Map.of("error", "Internal server error: " + ex.getMessage()));
-		}
-	}*/
-
-
-
-
-
-
-	//@Transactional(readOnly = true)
-//	@GetMapping("/userinfo-by-phone")
-//	public ResponseEntity<Map<String, Object>> getUserByPhone(@RequestParam String phone) {
-//		return userRepository.findByPhone(phone)
-//				.map(user -> {
-//					Long userId = user.getUserId();
-//					Shop shop = user.getShop();
-//					Long shopId = (shop != null) ? shop.getShopId() : null;
-//					Optional<UserProfile> optionalProfile = Optional.ofNullable(userProfileRepository.findByUserIdAndShopId(userId, shopId));
-//					Integer availablePoints = optionalProfile.map(UserProfile::getAvailablePoints).orElse(0);
-//					Map<String, Object> userInfo = new HashMap<>();
-//					userInfo.put("userId", userId);
-//					userInfo.put("shopId", shopId);
-//					userInfo.put("firstName", user.getFirstName());
-//					userInfo.put("lastName", user.getLastName());
-//					userInfo.put("email", user.getEmail());
-//					userInfo.put("phoneNumber", user.getPhone());
-//					userInfo.put("availablePoints", availablePoints); // ✅ Updated value
-//
-//					return ResponseEntity.ok(userInfo);
-//				})
-//				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-//						.body(Map.of("error", "User not found")));
-//	}
-
-
-//
-//@GetMapping("/email")
-//	public ResponseEntity<Map<String, Object>> getUserByEmail(@RequestParam String email) {
-//		return userRepository.findByPhone(email)
-//				.map(user -> {
-//					Long userId = user.getUserId();
-//					Shop shop = user.getShop();
-//					Long shopId = (shop != null) ? shop.getShopId() : null;
-//					Optional<UserProfile> optionalProfile = Optional.ofNullable(userProfileRepository.findByUserIdAndShopId(userId, shopId));
-//					Integer availablePoints = optionalProfile.map(UserProfile::getAvailablePoints).orElse(0);
-//					Map<String, Object> userInfo = new HashMap<>();
-//					userInfo.put("userId", userId);
-//					userInfo.put("shopId", shopId);
-//					userInfo.put("firstName", user.getFirstName());
-//					userInfo.put("lastName", user.getLastName());
-//					userInfo.put("email", user.getEmail());
-//					userInfo.put("phoneNumber", user.getPhone());
-//					userInfo.put("availablePoints", availablePoints); // ✅ Updated value
-//
-//					return ResponseEntity.ok(userInfo);
-//				})
-//				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-//						.body(Map.of("error", "User not found")));
-//	}
 	@GetMapping("/search_by_phone")
 	public UserDto searchByPhone(@RequestParam Long shopId, @RequestParam String phone) {
 		return userService.findByPhoneInShop(phone, shopId);

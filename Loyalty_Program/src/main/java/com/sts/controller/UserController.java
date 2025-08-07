@@ -31,50 +31,16 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-
-	/*@PostMapping("saveUser")
-	public ResponseEntity<User> createUser(@RequestBody User user) {
-		User userDetails = userService.createUserWithQrCode(user);
-		return new ResponseEntity<User>(userDetails, HttpStatus.CREATED);
-	}*/
-
 	// Create user and return user details + QR code
-    @PostMapping("/createuser")
-    public ResponseEntity<?> createUser(@RequestBody User user) {
-        try {
-            Map<String, Object> response = userService.createUserWithQrCode(user);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating user: " + e.getMessage());
-        }
-    }
-
-
- //  GET: Get user by QR token
-   /* @GetMapping("/user-by-qr")
-    public ResponseEntity<?> getUserByQrToken(@RequestParam("token") String token) {
-        Optional<User> userOpt = userService.getUserByQrToken(token);
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            Map<String, Object> response = new HashMap<>();
-            response.put("firstName", user.getFirstName());
-            response.put("lastName", user.getLastName());
-            response.put("email", user.getEmail());
-            response.put("phoneNumber", user.getPhone());
-            response.put("qrToken", user.getQrToken());
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
-    }
-	*/
-//	@GetMapping("/fetchUserById/{userId}")
-//	public ResponseEntity<User> getUserById(@PathVariable Long userId){
-//		return userService.getUserById(userId)
-//				.map(user -> ResponseEntity.ok(user))
-//				.orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-//						.body(null));
-//	}
+//    @PostMapping("/createuser")
+//    public ResponseEntity<?> createUser(@RequestBody User user) {
+//        try {
+//            Map<String, Object> response = userService.createUserWithQrCode(user);
+//            return ResponseEntity.ok(response);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating user: " + e.getMessage());
+//        }
+//    }
 
 	// READ ALL
     @GetMapping("/fetchAllUser")
@@ -92,28 +58,17 @@ public class UserController {
     }
     
     // UPDATE
-    @PutMapping("/updateUser/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
-        User updatedUser = userService.updateUser(id, userDetails);
-        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-    }
-    /*@PostMapping("/create")
-    public ResponseEntity<User> createUser1(@RequestBody User user) {
-        User response = userService.createUserWithQrCode(user);
-        return ResponseEntity.ok(response);
-    }*/
-    
-   /* DELETE
-    @DeleteMapping("/deleteUser/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }*/
+//    @PutMapping("/updateUser/{userId}")
+//    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+//        User updatedUser = userService.updateUser(id, userDetails);
+//        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+//    }
+
     //update user profile
-   @PutMapping("/update-profile")
-   public UserDetailsDTO updateUserProfile(@RequestBody UserDetailsDTO dto) {
-       return userService.updateUserProfile(dto);
-   }
+    @PutMapping("/update-profile")
+    public UserDetailsDTO updateUserProfile(@RequestBody UserDetailsDTO dto) {
+        return userService.updateUserProfile(dto);
+    }
 
     @GetMapping("/get-profile")
     public UserDetailsDTO getUserDetails(@RequestParam Long userId) {

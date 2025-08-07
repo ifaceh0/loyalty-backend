@@ -37,12 +37,12 @@ public class UserProfileController
 		}       
     }
 	
-	@GetMapping
-	public ResponseEntity<List<UserProfile>> getAllUserProfiles() 
-	{
-        List<UserProfile> userProfiles = userProfileService.getAllUserProfiles();
-        return new ResponseEntity<>(userProfiles, HttpStatus.OK);
-    }
+//	@GetMapping
+//	public ResponseEntity<List<UserProfile>> getAllUserProfiles()
+//	{
+//        List<UserProfile> userProfiles = userProfileService.getAllUserProfiles();
+//        return new ResponseEntity<>(userProfiles, HttpStatus.OK);
+//    }
 
 	@GetMapping("/{userId}/{shopId}")
     public ResponseEntity<UserProfile> getUserProfileById(@PathVariable Long userId, @PathVariable Long shopId) {
@@ -52,10 +52,10 @@ public class UserProfileController
                 .orElse(ResponseEntity.notFound().build());
     }
 
-	 @DeleteMapping("/{userId}/{shopId}")
-    public void deleteUserProfile(@PathVariable Long userId, @PathVariable Long shopId) {
-        UserProfileId id = new UserProfileId(userId, shopId);
-        userProfileService.deleteUserProfile(id);
-    }
+//	 @DeleteMapping("/{userId}/{shopId}")
+//    public void deleteUserProfile(@PathVariable Long userId, @PathVariable Long shopId) {
+//        UserProfileId id = new UserProfileId(userId, shopId);
+//        userProfileService.deleteUserProfile(id);
+//    }
 	
 }

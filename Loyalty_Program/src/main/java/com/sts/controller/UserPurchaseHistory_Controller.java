@@ -35,18 +35,18 @@ public class UserPurchaseHistory_Controller
 //	        return new ResponseEntity<>(savedPurchaseHistory, HttpStatus.CREATED);
 //	    }
 //
-	@GetMapping("/fetchAllUserPurchaseHistory")
-	public ResponseEntity<List<UserPurchase_History>> getAllUserPurchaseHistoryList(){
-		List<UserPurchase_History> userPurchaseHistoryList = userPurchaseHistoryService.getAllUserPurchaseHistory();
-		return new ResponseEntity<List<UserPurchase_History>>(userPurchaseHistoryList, HttpStatus.OK);
-	}
-	
-	@GetMapping("/fetchUserPurchaseHistoryById/{Id}")
-	public ResponseEntity<UserPurchase_History> getUserPurchaseHistoryById(@PathVariable Long Id){
-		return userPurchaseHistoryService.getUserPurchaseHistoryById(Id)
-				.map(userPurchaseHistory -> ResponseEntity.ok(userPurchaseHistory))
-				.orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-						.body(null));
-	}
+//	@GetMapping("/fetchAllUserPurchaseHistory")
+//	public ResponseEntity<List<UserPurchase_History>> getAllUserPurchaseHistoryList(){
+//		List<UserPurchase_History> userPurchaseHistoryList = userPurchaseHistoryService.getAllUserPurchaseHistory();
+//		return new ResponseEntity<List<UserPurchase_History>>(userPurchaseHistoryList, HttpStatus.OK);
+//	}
+//
+//	@GetMapping("/fetchUserPurchaseHistoryById/{Id}")
+//	public ResponseEntity<UserPurchase_History> getUserPurchaseHistoryById(@PathVariable Long Id){
+//		return userPurchaseHistoryService.getUserPurchaseHistoryById(Id)
+//				.map(userPurchaseHistory -> ResponseEntity.ok(userPurchaseHistory))
+//				.orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+//						.body(null));
+//	}
 }
 
