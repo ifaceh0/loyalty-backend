@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.sts.service.QRCodeService;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,6 +37,9 @@ public class QRCodeController {
 
 	@Autowired
 	private Shopkeeper_SettingRepository shopkeeperSettingRepository;
+  
+  @Autowired
+	private SpecialBonusRepository specialBonusRepository;
 
 	@GetMapping("/allShopsAvailable")
 	public ResponseEntity<?> getAllShopsAvailable(@RequestParam Long userId) {
@@ -185,20 +189,29 @@ public class QRCodeController {
 			if (userId == null || shopId == null || dollarAmount == null || dollarAmount <= 0) {
 				return ResponseEntity.badRequest().body("Invalid input: userId, shopId, and dollarAmount are required and must be > 0.");
 			}
+			// 1. Determine correct dollarToPointsMapping
+			double dollarToPoints = 1.0; // default fallback
 
-			// Fetch shopkeeper settings
-			Shopkeeper_Setting setting = shopkeeperSettingRepository.findByShop_ShopId(shopId)
-					.orElseThrow(() -> new RuntimeException("No setting found for shop " + shopId));
+			List<SpecialBonus> activeBonuses = specialBonusRepository.findActiveSpecialBonuses(shopId, LocalDate.now());
+			if (!activeBonuses.isEmpty()) {
+				// Use the first active bonus
+				dollarToPoints = activeBonuses.get(0).getDollartoPointsMapping();
+			} else {
+				//if there is now special bonus available
+				Shopkeeper_Setting setting = shopkeeperSettingRepository.findByShop_ShopId(shopId)
+						.orElseThrow(() -> new RuntimeException("No setting found for shop " + shopId));
+				dollarToPoints = setting.getDollarToPointsMapping() != null ? setting.getDollarToPointsMapping() : 1.0;
+			}
 
-			double dollarToPoints = setting.getDollarToPointsMapping() != null ? setting.getDollarToPointsMapping() : 1.0;
+			// 2. Calculate points
 			int calculatedPoints = (int) (dollarAmount * dollarToPoints);
-
-			// Fetch or create UserProfile
+			// 3. Fetch or create UserProfile
 			UserProfile profile = userProfileRepository.findByUserIdAndShopId(userId, shopId);
-
 			if (profile == null) {
+				// First transaction → apply signup bonus
+				Shopkeeper_Setting setting = shopkeeperSettingRepository.findByShop_ShopId(shopId)
+						.orElseThrow(() -> new RuntimeException("No setting found for shop " + shopId));
 				int signupBonus = (int) setting.getSign_upBonuspoints();
-
 				profile = new UserProfile();
 				profile.setUserId(userId);
 				profile.setShopId(shopId);
@@ -208,11 +221,10 @@ public class QRCodeController {
 				int currentPoints = profile.getAvailablePoints();
 				profile.setAvailablePoints(currentPoints + calculatedPoints);
 			}
-
 			profile.setUpdatedAt(LocalDateTime.now());
 			userProfileRepository.save(profile);
 
-			// Record in UserPurchase_History
+			// 4. Record in UserPurchase_History
 			User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
 			Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new RuntimeException("Shop not found"));
 
@@ -226,7 +238,7 @@ public class QRCodeController {
 			historyRepository.save(history);
 
 			return ResponseEntity.ok(Map.of(
-					"message", "Points calculated and added based on dollar amount and mapping.",
+					"message", "Points added successfully based on mapping.",
 					"earnedPoints", calculatedPoints,
 					"newBalance", profile.getAvailablePoints()
 			));
@@ -236,4 +248,5 @@ public class QRCodeController {
 					.body("Error adding points: " + e.getMessage());
 		}
 	}
+
 }
