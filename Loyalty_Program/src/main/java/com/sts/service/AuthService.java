@@ -132,6 +132,7 @@ public class AuthService {
 		String token = jwtUtil.generateToken(login.getEmail(), login.getRole());
 		Long id = null;
 		String name = null;
+		String companyEmail = null;
 
 		// Step 2: Match by email for USER or SHOP
 		if (login.getRole() == Role.USER) {
@@ -147,6 +148,7 @@ public class AuthService {
 				Shop shop = shopOpt.get();
 				id = shop.getShopId();
 				name = shop.getShopName();
+				companyEmail = shop.getCompanyEmail();
 
 				// Step 3: Check subscription status locally new start
 				if (!isSubscriptionActive(shop)) {
@@ -160,9 +162,10 @@ public class AuthService {
 			throw new RuntimeException("No matching User or Shop found for the provided email.");
 		}
 
-		return new AuthResponse(token, "Signin successful", id, name);
+		return new AuthResponse(token, "Signin successful", id, name, companyEmail);
 	}
-//new start
+
+	//new start
 	@Cacheable(key = "#shop.companyEmail", cacheNames = "subscriptions")
 	private boolean isSubscriptionActive(Shop shop) {
 		String status = shop.getSubscriptionStatus();
@@ -173,7 +176,8 @@ public class AuthService {
 				shop.getCompanyEmail(), status, endDate, isActive);
 		return isActive;
 	}
-//new end
+	//new end
+
 	@Value("${app.frontend.reset-url}")
 	private String frontendResetUrl;
 
